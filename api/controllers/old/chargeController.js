@@ -1,10 +1,7 @@
 const express = require('express');
-const authMiddleware = require('../middlewares/auth');
 const payment = require('../lib/payment/juno');
 
 const router = express.Router();
-
-// router.use(authMiddleware);
 
 
 

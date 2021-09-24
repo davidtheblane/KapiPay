@@ -6,7 +6,7 @@ function balance() {
 
   button.addEventListener('click', () => {
     button.textContent = "...Carregando"
-    fetch('http://localhost:5050/balance')
+    fetch('http://localhost:5050/account/balance')
       .then((response) => response.json())
       .then((data) => {
         const h5 = document.createElement('h5');
