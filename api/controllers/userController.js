@@ -7,7 +7,6 @@ const mailer = require('../modules/mailer')
 const authConfig = require('../config/auth.json')
 
 const User = require("../models/user");
-const router = express.Router();
 
 
 
@@ -20,7 +19,7 @@ function generateToken(params = {}) {
 
 
 //Registrar usuário
-router.post('/register', async (req, res) => {
+const createUser = async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -45,11 +44,12 @@ router.post('/register', async (req, res) => {
   } catch (err) {
     return res.status(400).send({ error: "Registration failed" });
   }
-});
+}
 
 
-//Autenticar Usuário
-router.post('/authenticate', async (req, res) => {
+
+//Login Usuário
+const authUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -66,7 +66,6 @@ router.post('/authenticate', async (req, res) => {
     //esconde o password
     user.password = undefined
 
-
     res.send({
       user,
       token: generateToken({ id: user.id }) //gera token na autenticação 
@@ -78,13 +77,11 @@ router.post('/authenticate', async (req, res) => {
   }
 
 
-
-
-});
+}
 
 
 //Forgot password
-router.post('/forgot_password', async (req, res) => {
+const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -105,6 +102,7 @@ router.post('/forgot_password', async (req, res) => {
         passwordResetToken: token,
         passwordResetExpires: now,
       }
+
     });
 
     //enviar email
@@ -115,7 +113,7 @@ router.post('/forgot_password', async (req, res) => {
       context: { token },
     }, (err) => {
       if (err)
-        return res.status(400).send({ error: "Cannot send forgot password email" });
+        return res.status(400).send({ error: "Cannot send forgot password email", token });
 
       return res.send()
     })
@@ -123,10 +121,11 @@ router.post('/forgot_password', async (req, res) => {
   } catch (err) {
     res.status(400).send({ error: "Erro on forgot password, try again" })
   }
-})
+}
+
 
 //Reset password
-router.post('/reset_password', async (req, res) => {
+const passwordReset = async (req, res) => {
   const { email, token, password } = req.body;
 
   try {
@@ -148,37 +147,36 @@ router.post('/reset_password', async (req, res) => {
 
     await user.save();
 
-    res.send('ok')
+    res.send('ok, senha alterada')
 
 
 
   } catch (err) {
     res.status(400).send({ error: "Cannot reset password, try again" });
   }
-})
+}
 
 
-//Listar todos usuários
-router.get('/user', async (req, res) => {
+//Listar todos usuários - vai ser apenas admin
+const listUsers = async (req, res) => {
   try {
     const user = await User.find({});
     return res.status(200).send({ user })
   } catch (error) {
     return res.status(400).send({ error: "Cannot find users" })
   }
-});
+}
 
-//Usuário por ID
-router.get('/user/:id', async (req, res) => {
+
+//Listar Usuário por ID - vai ser apenas admin
+const getUser = async (req, res) => {
   const id = req.params.id;
-
   try {
     const user = await User.findById(id);
     return res.status(200).send({ user })
   } catch (error) {
     return res.status(400).send({ error: `Cannot find user id: ${id}` })
   }
-})
+}
 
-
-module.exports = app => app.use('/auth', router);
+module.exports = { listUsers, getUser, createUser, authUser, forgotPassword, passwordReset }
