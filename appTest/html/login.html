@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/login.css">
+  <!-- //SCRIPTS -->
+  <script defer src="../js/login.js"></script>
+
+  <title>Kapi Pay Login</title>
+</head>
+
+<body>
+  <main class="login">
+    <div class="login__container">
+
+      <section id="header">
+        <h1 id="title">Kapi Pay 💸</h1>
+        <p id="description">Bem vindo, faça seu Login</p>
+
+      </section>
+
+      <form action="/login" method="POST" id="login__form">
+        <div>
+          <label for="email" class="form__item">
+            Email
+            <input type="text" id="email" placeholder="Digite seu email" required>
+          </label>
+        </div>
+
+        <div>
+          <label for="password" class="form__item">
+            Password
+            <input type="text" id="password" placeholder="Digite sua senha" required>
+          </label>
+        </div>
+
+        <button href="authenticate.html" id="submit" type="submit">Acessar</button>
+
+        <div id="login-options">
+          <a href="register.html" id="register">Quero criar minha conta</a>
+          <a href="#" id="password_recover">Esqueci a senha</p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+
+
+
+
+</body>
+
+</html>

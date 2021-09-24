@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('./partials/head') %>
+</head>
+
+<body>
+  <header>
+    <%- include('./partials/header') %>
+  </header>
+
+  <main>
+    <div class="jumbotron">
+
+      <section id="menu">
+        <h3>Bem vindo!</h3>
+        <h5>Escolha uma opção abaixo:</h5>
+        <br>
+        <p>Meu Perfil</p>
+        <p>Criar conta digital</p>
+        <p>Listar contas à vencer</p>
+        <p>Listar contas pagas</p>
+
+
+        <div id="saldo">
+          <h5></h5>
+          <a href="#" id="view_balance" onclick="balance()">Verificar Saldo</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+
+  <%- include('./partials/footer') %>
+    <!-- //SCRIPTS -->
+    <script src="../js/balance.js">
+    </script>
+</body>
+
+</html>
