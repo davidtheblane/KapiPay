@@ -1,17 +1,18 @@
 const express = require('express');
-const app = express()
-const ejs = require('ejs')
+const app = express();
 
-app.set('view engine', 'ejs')
+//carregar view engine
+app.set('view engine', 'ejs');
 
+// carregar CSS
+app.use(express.static('public'))
 
-// carregar CSS?
-// app.use(express.static('public'))
 
 //HOME
 app.get('/', (req, res) => {
   res.render('index')
 })
+
 
 //LOGIN
 app.get('/login', (req, res) => {
@@ -27,7 +28,7 @@ app.get('/register', (req, res) => {
 
 const PORT = process.env.PORT || 5051
 app.listen(PORT, () => {
-  (console.log(`Server running at port: ${PORT}`))
+  (console.log(`👾 Server running at port: ${PORT}`))
 })
 
 

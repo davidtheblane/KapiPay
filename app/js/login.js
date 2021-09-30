@@ -43,6 +43,8 @@ const login = () => {
         return response.json();
       }).then((data) => {
 
+        //ifstatus = 200, store token in cookies
+        //redirect to home
         console.log(data)
       })
     })

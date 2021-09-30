@@ -46,7 +46,6 @@ const authenticate = () => {
       })
     })
   }
-
 }
 
 window.onload = authenticate;

@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
+require('dotenv').config()
 
-mongoose.connect("mongodb+srv://davib:12345@cluster0.30bet.mongodb.net/paymentDatabase?retryWrites=true&w=majority",
-  {
-    // useNewUrlParser: true,
-    // useUnifiedTopology: true,
-  });
+const DATABASE_URL = process.env.DATABASE_URL;
+
+mongoose.connect(DATABASE_URL);
 
 mongoose.Promise = global.Promise;
 
@@ -18,3 +17,12 @@ const db = mongoose.connection
 db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('📦 Connected to the database'))
 
+
+
+
+
+// // mongoose.connect(DATABASE_URL,
+// //   {
+// //     // useNewUrlParser: true,
+// //     // useUnifiedTopology: true,
+// //   });
