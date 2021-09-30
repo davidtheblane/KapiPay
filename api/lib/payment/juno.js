@@ -11,19 +11,9 @@ const config = {
   mainResourceToken:
     "F6A893ACFDF50A41064A691F00E98697BAD697FCE825D753B3AF9B4CCFCA12B9",
   client1_Resource_Token: "3E010929D37D8C63DC046C3F9F4C2016BD10729755ED1733675972C7E09DF15C",
-
   client2_Resource_Token: "438D761C76C12C255AA747B42F07BE88A179F572BE52012D5DC5615DC7A3C806",
   //Adalberto
   client3_Resource_Token: "04D8CA7AA59746A13DF4C648F9419C816EF161372A19431B4B0BA3C2E0AE6475",
-  // resourceTokens = [
-  //   {
-  //     main:  "F6A893ACFDF50A41064A691F00E98697BAD697FCE825D753B3AF9B4CCFCA12B9",
-  //     client1: "3E010929D37D8C63DC046C3F9F4C2016BD10729755ED1733675972C7E09DF15C",
-  //     client3: "04D8CA7AA59746A13DF4C648F9419C816EF161372A19431B4B0BA3C2E0AE6475",
-  //   }
-  // ],
-
-
 };
 
 
@@ -53,10 +43,12 @@ const payment = {
         Authorization: `Bearer ${token}`,
         "X-Api-Version": "2",
         "X-Resource-Token": config.mainResourceToken,
+        "Content-Type": "application/json"
       },
     });
     return instance;
   },
+
 
   //----> GET TOKEN
   getToken: async () => {
@@ -81,7 +73,7 @@ const payment = {
       const instance = await payment.init();
       const res = await instance.get("balance", {
         headers: {
-          "X-Resource-Token": config.client1_Resource_Token,
+          "X-Resource-Token": config.client3_Resource_Token,
         }
       });
       return res.data;
@@ -94,11 +86,7 @@ const payment = {
   listCharges: async () => {
     try {
       const instance = await payment.init();
-      const res = await instance.get("charges", {
-        headers: {
-          "X-Resource-Token": config.client1_Resource_Token,
-        }
-      });
+      const res = await instance.get("charges");
       return res.data._embedded;
     } catch (err) {
       throw err
@@ -138,21 +126,22 @@ const payment = {
     }
   },
 
+
+
+
   //----> CREATE DIGITAL ACCOUNT - utiliza JSON no corpo
   createAccount: async (body) => {
-    try {
-      const instance = await payment.init();
-      const res = await instance.post("digital-accounts", body, {
-        headers: {
-          "Content-Type": "application/json"
-        },
-      })
-      return res.data;
 
-    } catch (err) {
-      throw err;
-    }
+    const instance = await payment.init();
+    const res = await instance.post("digital-accounts", body)
+    console.log(res.data)
+    return res.data;
+
+
   },
+
+
+
 
   //----> ACCOUNT STATUS
   accountStatus: async () => {
@@ -169,12 +158,8 @@ const payment = {
   listPendingDocuments: async () => {
     try {
       const instance = await payment.init();
-      const res = await instance.get("documents", {
-        headers: {
-          "X-Resource-Token": config.client3_Resource_Token,
-        }
-      })
-      return res.data._embedded.documents
+      const res = await instance.get("documents")
+      return res.data
     } catch (err) {
       throw err;
     }
@@ -185,13 +170,13 @@ const payment = {
     try {
       const instance = await payment.init();
 
-      let docFile = fs.readFileSync('./kapSelfie.jpg')
+      let docFile = fs.readFileSync('../../resources/imgs/irisDocumento.jpg')
 
       const formData = new FormData();
-      formData.append('files', docFile.toString(), "kapSelfie.jpg");
-      const res = await instance.post(`documents/doc_BC3DF8E0AA7FC2AB/files`, formData, {
+      formData.append('files', docFile.toString(), "irisDocumento.jpg");
+      const res = await instance.post(`documents/doc_A0EC2EB9772C5F98/files`, formData, {
         headers: {
-          "X-Resource-Token": config.client3_Resource_Token,
+          "X-Resource-Token": "3AECED12C4C9E7DD1CBDE7AE9B822936BB0B8175DFE160894BD2A69279AF9876",
           ...formData.getHeaders(),
         }
       })
@@ -203,6 +188,29 @@ const payment = {
       throw err;
     }
   },
+
+  // sendDocuments: async () => {
+  //   try {
+  //     const instance = await payment.init();
+
+  //     let docFile = fs.readFileSync('./kapSelfie.jpg')
+
+  //     const formData = new FormData();
+  //     formData.append('files', docFile.toString(), "kapSelfie.jpg");
+  //     const res = await instance.post(`documents/doc_BC3DF8E0AA7FC2AB/files`, formData, {
+  //       headers: {
+  //         "X-Resource-Token": config.client3_Resource_Token,
+  //         ...formData.getHeaders(),
+  //       }
+  //     })
+  //       .catch(err => {
+  //         console.log(err.response.data)
+  //       })
+  //     return res.data
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // },
 
 
 

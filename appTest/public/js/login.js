@@ -1,15 +1,17 @@
-const login = () => {
-  const validateEmail = (event) => {
-    const input = event.currentTarget;
-    const regex = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/gm;
-    const emailTest = regex.test(input.value);
+const { response } = require("express");
 
-    if (!emailTest)
-      console.log('email não valido')
-    else {
-      console.log('email valido')
-    }
-  }
+const login = () => {
+  // const validateEmail = (event) => {
+  //   const input = event.currentTarget;
+  //   const regex = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/gm;
+  //   const emailTest = regex.test(input.value);
+
+  //   if (!emailTest)
+  //     console.log('email não valido')
+  //   else {
+  //     console.log('email valido')
+  //   }
+  // }
 
 
 
@@ -17,7 +19,7 @@ const login = () => {
   const inputPassword = document.querySelector('#password')
   const submitButton = document.querySelector('#submit')
 
-  inputEmail.addEventListener('input', validateEmail)
+  // inputEmail.addEventListener('input', validateEmail)
 
 
 
@@ -39,12 +41,17 @@ const login = () => {
           "email": inputEmail.value,
           "password": inputPassword.value
         })
-      }).then((response) => {
-        return response.json();
-      }).then((data) => {
-
-        console.log(data)
       })
+        .then((response) => {
+          return response.json();
+
+        })
+        .then((data) => {
+          console.log(data)
+          if (response.status == 200) {
+            response.render('index')
+          }
+        })
     })
   }
 
