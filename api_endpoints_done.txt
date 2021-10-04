@@ -1,21 +1,18 @@
-OK > Criar um model novo para conta do usuario
-OK > popular essa model
-Interligar os BDs pelo email
+Como passar o x-resource-token do usuario logado.
+
+OK > mergear o model de users e popular
+
+OK > LIST CHARGES - verified
+OK > VIEW CHARGE BY CHARGE ID - verified
+OK > SEND CHARGE - verified
+OK > CREATE DIGITAL ACCOUNT - verified
+OK > LIST PENDING DOCUMENTS - verified
+OK > SEND DOCUMENTS - verified
+OK > GET BALANCE - verified
+OK > STATUS ACCOUNT - verified
 
 
-OK > GET BALANCE
-OK > SEND CHARGE
-OK > LIST CHARGES
-OK > STATUS ACCOUNT
-OK > CREATE DIGITAL ACCOUNT
-OK > LIST PENDING DOCUMENTS
-
-
-VIEW CHARGE BY ID
-
-SEND DOCUMENTS
-
-TRANSFER
+TRANSFER - PAYMENT
 CARD PAYMENT
 CREDIT CARD TOKENIZATION
 

@@ -2,10 +2,15 @@ const express = require("express");
 const morgan = require('morgan')
 const cors = require('cors');
 require('dotenv').config()
+const multer = require('multer')
+
+const upload = multer()
 
 
 const app = express();
 
+app.use(upload.any());
+app.use(express.static('public'));
 
 app.use(cors());
 app.use(morgan('dev'));

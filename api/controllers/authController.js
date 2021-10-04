@@ -21,7 +21,6 @@ module.exports = {
   createUser: async (req, res) => {
     const { email } = req.body;
 
-
     try {
       //verifica se já tem algum user com o mesmo email
       if (await User.findOne({ email })) {
@@ -33,7 +32,6 @@ module.exports = {
 
         //esconde o password
         user.password = undefined;
-
 
         return res.status(200).send({
           user,

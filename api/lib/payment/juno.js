@@ -1,6 +1,7 @@
 const axios = require("axios");
-const FormData = require('form-data');
-const fs = require('fs');
+const FormData = require("form-data");
+const fs = require("fs");
+const path = require("path");
 
 const config = {
   baseUrlAuth: "https://sandbox.boletobancario.com/authorization-server",
@@ -10,19 +11,14 @@ const config = {
   secret: "U|x{V|SCwRB&5|CbUMvB#bo6kPl!IDD^",
   mainResourceToken:
     "F6A893ACFDF50A41064A691F00E98697BAD697FCE825D753B3AF9B4CCFCA12B9",
-  client1_Resource_Token: "3E010929D37D8C63DC046C3F9F4C2016BD10729755ED1733675972C7E09DF15C",
-  client2_Resource_Token: "438D761C76C12C255AA747B42F07BE88A179F572BE52012D5DC5615DC7A3C806",
-  //Adalberto
-  client3_Resource_Token: "04D8CA7AA59746A13DF4C648F9419C816EF161372A19431B4B0BA3C2E0AE6475",
 };
-
-
 
 const payment = {
   //----> INIT AUTHORIZATION
   initAuth: async () => {
     const encoded = Buffer.from(`${config.id}:${config.secret}`).toString(
-      "base64");
+      "base64"
+    );
 
     const instance = axios.create({
       baseURL: config.baseUrlAuth,
@@ -43,12 +39,11 @@ const payment = {
         Authorization: `Bearer ${token}`,
         "X-Api-Version": "2",
         "X-Resource-Token": config.mainResourceToken,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
     });
     return instance;
   },
-
 
   //----> GET TOKEN
   getToken: async () => {
@@ -73,8 +68,25 @@ const payment = {
       const instance = await payment.init();
       const res = await instance.get("balance", {
         headers: {
-          "X-Resource-Token": config.client3_Resource_Token,
-        }
+          "X-Resource-Token":
+            "3AECED12C4C9E7DD1CBDE7AE9B822936BB0B8175DFE160894BD2A69279AF9876",
+        },
+      });
+      return res.data;
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  //----> ACCOUNT STATUS
+  accountStatus: async () => {
+    try {
+      const instance = await payment.init();
+      const res = await instance.get("digital-accounts", {
+        headers: {
+          "X-Resource-Token":
+            "3AECED12C4C9E7DD1CBDE7AE9B822936BB0B8175DFE160894BD2A69279AF9876",
+        },
       });
       return res.data;
     } catch (err) {
@@ -86,25 +98,40 @@ const payment = {
   listCharges: async () => {
     try {
       const instance = await payment.init();
-      const res = await instance.get("charges");
-      return res.data._embedded;
+      const res = await instance.get("charges", {
+        headers: {
+          "X-Resource-Token":
+            "3AECED12C4C9E7DD1CBDE7AE9B822936BB0B8175DFE160894BD2A69279AF9876",
+        },
+      });
+      return res.data;
     } catch (err) {
-      throw err
+      throw err;
+    }
+  },
+
+  //----> LIST CHARGE BY Charge ID
+  chargeById: async (id) => {
+    try {
+      const instance = await payment.init();
+      const res = await instance.get(`charges/${id}`);
+      return res.data;
+    } catch (err) {
+      throw err;
     }
   },
 
   //----> CHARGE - utiliza JSON no corpo
   charge: async (body) => {
-
     try {
       const instance = await payment.init();
       const res = await instance.post("charges", body, {
         headers: {
-          "Content-Type": "application/json",
-          "X-Resource-Token": config.client3_Resource_Token
+          "X-Resource-Token":
+            "3AECED12C4C9E7DD1CBDE7AE9B822936BB0B8175DFE160894BD2A69279AF9876",
         },
       });
-      return res.data._embedded["charges"][0].id;
+      return res.data;
     } catch (err) {
       throw err;
     }
@@ -117,73 +144,70 @@ const payment = {
       const res = await instance.post("payments", body, {
         headers: {
           "Content-Type": "application/json",
-          "X-Resource-Token": config.client3_Resource_Token
-        }
-      })
-      return res.data;
-    } catch (err) {
-      throw err
-    }
-  },
-
-
-
-
-  //----> CREATE DIGITAL ACCOUNT - utiliza JSON no corpo
-  createAccount: async (body) => {
-
-    const instance = await payment.init();
-    const res = await instance.post("digital-accounts", body)
-    console.log(res.data)
-    return res.data;
-
-
-  },
-
-
-
-
-  //----> ACCOUNT STATUS
-  accountStatus: async () => {
-    try {
-      const instance = await payment.init();
-      const res = await instance.get("digital-accounts");
+          "X-Resource-Token":
+            "3AECED12C4C9E7DD1CBDE7AE9B822936BB0B8175DFE160894BD2A69279AF9876",
+        },
+      });
       return res.data;
     } catch (err) {
       throw err;
     }
+  },
+
+  //----> CREATE DIGITAL ACCOUNT - utiliza JSON no corpo
+  createAccount: async (body) => {
+    const instance = await payment.init();
+    const res = await instance.post("digital-accounts", body, {
+      headers: {
+        "X-Resource-Token": config.mainResourceToken,
+      },
+    });
+    console.log(res.data);
+    return res.data;
   },
 
   //----> LIST PENDING DOCUMENTS
   listPendingDocuments: async () => {
     try {
       const instance = await payment.init();
-      const res = await instance.get("documents")
-      return res.data
+      const res = await instance.get("documents", {
+        headers: {
+          "X-Resource-Token":
+            "BFBE2F8263AAD912E3159026ECAC481BEA90165A2C77EA2E35E111AC09B2F32A",
+        },
+      });
+      return res.data;
     } catch (err) {
       throw err;
     }
   },
 
   //----> SENDING DOCUMENTS - utiliza Multipart Form
-  sendDocuments: async () => {
+  sendDocuments: async (file, id) => {
     try {
       const instance = await payment.init();
 
-      let docFile = fs.readFileSync('../../resources/imgs/irisDocumento.jpg')
+      // let docFile = fs.readFileSync('imgs/document.jpg')
+      // formData.append('files', docFile.toString(), "irisDocumento.jpg");
+      const { buffer, originalname } = file[0];
+      const filename = originalname;
 
       const formData = new FormData();
-      formData.append('files', docFile.toString(), "irisDocumento.jpg");
-      const res = await instance.post(`documents/doc_A0EC2EB9772C5F98/files`, formData, {
-        headers: {
-          "X-Resource-Token": "3AECED12C4C9E7DD1CBDE7AE9B822936BB0B8175DFE160894BD2A69279AF9876",
-          ...formData.getHeaders(),
-        }
-      })
-        .catch(err => {
-          console.log(err.response.data)
+      formData.append("files", buffer, { filename });
+
+      const res = await instance
+        .post(`documents/${id}/files`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "X-Resource-Token":
+              "BFBE2F8263AAD912E3159026ECAC481BEA90165A2C77EA2E35E111AC09B2F32A",
+            ...formData.getHeaders(),
+          },
         })
-      return res.data
+        .catch((err) => {
+          console.log(err.response.data);
+        });
+      return res.data;
     } catch (err) {
       throw err;
     }
@@ -211,9 +235,5 @@ const payment = {
   //     throw err;
   //   }
   // },
-
-
-
-}
-
+};
 module.exports = payment;
