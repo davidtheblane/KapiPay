@@ -1,9 +1,5 @@
 const payment = require('../lib/payment/juno');
-const UserDigitalAccount = require('../models/userDigitalAccount')
-const AccountResponse = require('../models/accountResponse')
-
-
-
+const User = require('../models/user');
 
 module.exports = {
   //GET BALANCE
@@ -27,7 +23,6 @@ module.exports = {
   //SEND CHARGE
   createCharge: async (req, res) => {
     try {
-
       const body = req.body;
 
       const charge = await payment.charge(body);
@@ -43,7 +38,20 @@ module.exports = {
     try {
       const charges = await payment.listCharges();
 
-      return res.status(200).send(charges)
+      return res.status(200).json(charges)
+
+    } catch (error) {
+      return res.status(400).send({ message: error.message })
+    }
+  },
+
+  //LIST CHARGE by Charge Id
+  chargeByChargeId: async (req, res) => {
+
+    try {
+      const charge = await payment.chargeById(req.params.id);
+
+      return res.status(200).send(charge)
 
     } catch (error) {
       return res.status(400).send({ message: error.message })
@@ -55,7 +63,9 @@ module.exports = {
   accountStatus: async (req, res) => {
     try {
       const status = await payment.accountStatus();
+
       res.status(200).send(status)
+
     } catch (err) {
       console.log(err.message || err.stack)
     }
@@ -65,33 +75,21 @@ module.exports = {
   //CREATE DIGITAL ACCOUNT
   createAccount: async (req, res) => {
     const { email } = req.body;
+
     try {
+      if (await User.findOne({ email })) {
+        // criação de conta digital
+        const accountCreatedResponse = await payment.createAccount(req.body);
 
-      if (await UserDigitalAccount.findOne({ email })) {
-        return res.status(400).send({ error: "User already exists" });
+        // criação de conta no bd, somente se sucesso
+        //fazer uma validação aqui para evitar duplicidade
+        const userDigitalAccount = await User.updateOne({ email }, { ...req.body, junoResponse: accountCreatedResponse })
 
-      } else {
-        // criação de conta digital na Juno
-        const body = req.body
-        const accountCreatedResponse = await payment.createAccount(body);
-        //salva resposta no bd
-        AccountResponse.create(accountCreatedResponse)
-
-
-        if (!accountCreatedResponse) {
-          return res.status(400).send({ message: "User creating error, cant create a digital account in Juno" })
-
-        } else {
-          // criação de conta no bd, somente se sucesso na juno
-          const userDigitalAccount = await UserDigitalAccount.create(body)
-
-          return res.status(200).send({
-            userDigitalAccount,
-            accountCreatedResponse
-          })
-        }
+        return res.status(200).send({
+          accountCreatedResponse
+        })
       }
-
+      return res.status(400).send({ error: "User does not exist" });
 
     } catch (err) {
       return res.status(400).send({ message: err.message })
@@ -116,9 +114,10 @@ module.exports = {
   //SEND DOCUMENTS
   sendDocuments: async (req, res) => {
     try {
-      const send_docs = await payment.sendDocuments();
+      const send_docs = await payment.sendDocuments(req.files, req.params.id);
       console.log(send_docs)
       res.status(200).send(send_docs)
+
     } catch (err) {
       console.log(err.message || err.stack)
     }
