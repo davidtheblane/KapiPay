@@ -25,21 +25,15 @@ module.exports = {
       //verifica se já tem algum user com o mesmo email
       if (await User.findOne({ email })) {
         return res.status(400).send({ error: "User already exists" });
-
       } else {
-
         const user = await User.create(req.body);
-
         //esconde o password
         user.password = undefined;
-
         return res.status(200).send({
           user,
           token: generateToken({ id: user.id }) //gera token no registro
-
         });
       }
-
     } catch (err) {
       return res.status(400).send({ error: "Registration failed" });
     }
@@ -50,60 +44,48 @@ module.exports = {
   //Login Usuário
   authUser: async (req, res) => {
     const { email, password } = req.body;
+    console.log('chegou aqui')
 
     try {
-
       //encontrar usuario por email e password
       const user = await User.findOne({ email }).select('+password');
-
       if (!user)
         return res.status(400).send({ error: "User not found" });
-
       if (!await bcrypt.compare(password, user.password))
         return res.status(400).send({ error: "Invalid password" });
 
       //esconde o password
       user.password = undefined
-
       res.send({
         user,
         token: generateToken({ id: user.id }),
-
+        message: console.log("chegou na rota")
       })
-
-
     } catch (e) {
       console.log(e.message || e.stack)
     }
-
-
   },
 
 
   //Forgot password
   forgotPassword: async (req, res) => {
     const { email } = req.body;
-
     try {
-
       const user = await User.findOne({ email });
-
       if (!user)
         return res.status(400).send({ error: "user not found" });
-
       //gera token pra recuperar senha
       const token = crypto.randomBytes(20).toString('hex');
       //tempo de expiração do token
       const now = new Date();
       now.setHours(now.getHours() + 1)
-
       await User.findByIdAndUpdate(user.id, {
         '$set': {
           passwordResetToken: token,
           passwordResetExpires: now,
         }
-
       });
+
 
       //enviar email
       mailer.sendMail({
