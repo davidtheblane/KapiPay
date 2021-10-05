@@ -86,7 +86,8 @@ module.exports = {
         const userDigitalAccount = await User.updateOne({ email }, { ...req.body, junoResponse: accountCreatedResponse })
 
         return res.status(200).send({
-          accountCreatedResponse
+          accountCreatedResponse,
+          userDigitalAccount
         })
       }
       return res.status(400).send({ error: "User does not exist" });

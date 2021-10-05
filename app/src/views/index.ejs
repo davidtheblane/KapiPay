@@ -8,15 +8,27 @@
 </style>
 
 <html lang="en">
-  <head>
-    <%- include('partials/head') %>
-  </head>
 
-  <body>
-    <header><%- include('partials/header') %></header>
+<head>
+  <%- include('partials/head') %>
+</head>
 
-    <main><%- include('sections/main') %></main>
+<body>
+  <header>
+    <%- include('partials/header') %>
+  </header>
 
-    <footer><%- include('partials/footer') %></footer>
-  </body>
+  <main>
+    <%- include('pages/main') %>
+  </main>
+
+  <footer>
+    <%- include('partials/footer') %>
+  </footer>
+
+
+  <script src="./pages/loginScript.js">
+  </script>
+</body>
+
 </html>
