@@ -1,13 +1,13 @@
 # KapiPay
-#### Automatic bill payment system
-<hr>
 
+#### Automatic bill payment system
+
+<hr>
 
 ### GOALS
 
-
-
 **TO-DO**
+
 ```
 Dividir o model de users, em user e userAccount
 
@@ -15,9 +15,11 @@ TRANSFER - PAYMENT
 CARD PAYMENT
 CREDIT CARD TOKENIZATION
 ```
+
 <hr>
 
 **DONE**
+
 ```
 OK > mergear o model de users e popular
 OK > Como passar o x-resource-token do usuario logado.

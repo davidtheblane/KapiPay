@@ -1,18 +1,20 @@
 const payment = require('../resources/lib/payment/juno');
 const User = require('../models/user');
+const axios = require('axios');
+
+
 
 module.exports = {
+
   //GET BALANCE
   getUserBalance: async (req, res) => {
+
     try {
-      const balance = await payment.balance();
+      const resourceToken = req.headers.resourcetoken
+      const balance = await payment.balance(resourceToken);
+      console.log(req.headers)
 
-      const obj = {
-
-        total: balance.transferableBalance
-      }
-
-      return res.send(obj)
+      return res.status(200).json(balance)
 
     } catch (err) {
       return res.status(400).send({ err: "error finding balance " })
@@ -128,28 +130,11 @@ module.exports = {
   //CARD PAYMENT (INSERT CREDITS)
   cardPayment: async (req, res) => {
     try {
-      const body = {
-        "chargeId": "chr_17E002209C2B1DA6FA54C8AFBD22883F",
-        "billing": {
-          "email": "asltolfo.mariano@uol.com.br",
-          "address": {
-            "street": "rua do Jardim Rodeio",
-            "number": "255",
-            "complement": "",
-            "neighborhood": "Jardim Rodeio",
-            "city": "São Paulo",
-            "state": "SP",
-            "postCode": "08775110"
-          },
-          "delayed": false
-        },
-        "creditCardDetails": {
-          "creditCardId": "45758ced-e902-49d3-be39-ba21a7775fe7"
-        }
-      }
+      const body = req.body
 
       const card_payment = await payment.cardPayment(body)
-      console.log(card_payment)
+
+      res.status(200).json(card_payment)
     } catch (err) {
       console.log(err.message || err.stack)
     }
@@ -158,9 +143,7 @@ module.exports = {
   //PIX PAYMENT (INSERT CREDITS)
   pixPayment: async (req, res) => {
     try {
-      const body = {
-        //preencher
-      }
+      const body = req.body
       const pix_payment = await payment.pixPayment(body)
       console.log(pix_payment)
     } catch (err) {

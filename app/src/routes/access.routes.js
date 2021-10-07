@@ -10,6 +10,11 @@ router.get('/login', (req, res) => {
   res.render("pages/login");
 })
 
+router.post('/login', (req, res) => {
+  console.log(req.body)
+  json(req.body)
+})
+
 router.get('/register', (req, res) => {
   res.render("pages/register")
 })
