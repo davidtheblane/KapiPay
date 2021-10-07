@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!-- STYLE -->
+<style>
+  form {
+    width: 400px;
+    margin: 0 auto;
+  }
+</style>
+<html lang="en">
+
+<head>
+  <%- include('../partials/head') %>
+</head>
+
+<body>
+
+
+
+  <form id="register-form">
+    <h1>Register</h1>
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Nome</label>
+      <input type="text" id="name" name="name" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" id="email" name="email" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Senha</label>
+      <input type="password" class="form-control" id="password" name="password" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar</button>
+    <br>
+    <a href="/login" class="btn btn-primary">Login</a>
+
+  </form>
+  </section>
+  </div>
+
+
+
+  <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+</body>
+
+</html>

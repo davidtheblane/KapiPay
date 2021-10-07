@@ -6,7 +6,6 @@ const multer = require('multer')
 
 const upload = multer()
 
-
 const app = express();
 
 app.use(upload.any());
