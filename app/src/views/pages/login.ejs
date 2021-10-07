@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <!-- CSS -->
-
 <style>
   .container {
     width: 500px;
@@ -22,7 +21,6 @@
 <!-- HTML -->
 <html lang="en">
 
-
 <head>
   <%- include('../partials/head') %>
 </head>
@@ -30,7 +28,7 @@
 <body>
 
   <div class="container">
-    <form method="POST" id="login-form">
+    <form id="form-login">
       <h1>Login</h1>
       <div id="emailHelp" class="form-text">
         Não iremos compartilhar sua senha com ninguém.
@@ -47,8 +45,7 @@
         <input type="checkbox" class="form-check-input" id="exampleCheck1" />
         <label class="form-check-label" for="exampleCheck1">Lembrar senha</label>
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-      <input type="submit">Submit </input>
+      <button type="submit" class="btn btn-primary">Entrar</button>
 
       <div>
         <a href="/register">Criar conta</a>

@@ -1,4 +1,4 @@
-const payment = require('../lib/payment/juno');
+const payment = require('../resources/lib/payment/juno');
 const User = require('../models/user');
 
 module.exports = {
