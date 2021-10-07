@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
-const mailer = require('../modules/mailer')
+const mailer = require('../resources/mail/modules/mailer')
 const User = require("../models/user");
 
 require('dotenv').config()

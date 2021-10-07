@@ -1,7 +1,7 @@
 const express = require("express");
 const morgan = require('morgan')
-const cors = require('cors');
 require('dotenv').config()
+const cors = require('cors');
 const multer = require('multer')
 
 const upload = multer()
@@ -22,6 +22,6 @@ app.use('/account', require('./routes/account.routes'))
 
 
 
-const PORT = process.env.SERVER_PORT || 5050;
+const PORT = process.env.API_PORT || 5050;
 app.listen(PORT, () => console.log(`👾 Server Running on port: ${PORT}`));
 
