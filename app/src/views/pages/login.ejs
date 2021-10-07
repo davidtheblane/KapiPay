@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!-- CSS -->
+
+<style>
+  .container {
+    width: 500px;
+    margin: 0 auto;
+    border: 1px dotted gray;
+    padding: 1rem;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  form {
+    width: 400px;
+    margin: 0 auto;
+  }
+</style>
+
+
+
+<!-- HTML -->
+<html lang="en">
+
+
+<head>
+  <%- include('../partials/head') %>
+</head>
+
+<body>
+
+  <div class="container">
+    <form method="POST" id="login-form">
+      <h1>Login</h1>
+      <div id="emailHelp" class="form-text">
+        Não iremos compartilhar sua senha com ninguém.
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" id="email" name="email" class="form-control" aria-describedby="emailHelp" required />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="password" name="password" required />
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1" />
+        <label class="form-check-label" for="exampleCheck1">Lembrar senha</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <input type="submit">Submit </input>
+
+      <div>
+        <a href="/register">Criar conta</a>
+        <br>
+        <a href="/forgot_password">Esqueci a senha</a>
+      </div>
+    </form>
+  </div>
+
+  <footer>
+    <%- include('../partials/footer') %>
+  </footer>
+
+
+</body>
+
+</html>

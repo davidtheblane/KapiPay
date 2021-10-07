@@ -18,9 +18,6 @@ router.get('/status', authMiddleware, accountController.accountStatus)
 router.get('/documents', authMiddleware, accountController.listPendingDocuments)
 
 
-
-
-
 router.post('/create', authMiddleware, accountController.createAccount)
 router.post('/charge', authMiddleware, accountController.createCharge)
 router.post('/documents/:id', authMiddleware, accountController.sendDocuments)
