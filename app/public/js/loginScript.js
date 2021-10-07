@@ -1,9 +1,12 @@
-const form = document.getElementById('login-form')
+const form = document.getElementById('form-login')
 const axiosInstance = require("../services/api.login.service");
 
-form.addEventListener('submit', async (event) => {
-  console.log("chegou no event listener")
+console.log("AMIGO ESTOU AQUI...")
+
+form.addEventListener('submit', (event) => {
   event.preventDefault()
+  console.log("chegou no event listener")
+  return
   const loginData = {
     email: event.target.email.value,
     password: event.target.password.value,
@@ -17,4 +20,3 @@ form.addEventListener('submit', async (event) => {
     console.log(error.message)
   }
 })
-
