@@ -3,6 +3,9 @@ const FormData = require("form-data");
 const fs = require("fs");
 const path = require("path");
 
+const clientResourceToken = process.env.CLIENT_RESOURCE_TOKEN
+
+
 const config = {
   baseUrlAuth: "https://sandbox.boletobancario.com/authorization-server",
   baseUrl: "https://sandbox.boletobancario.com/api-integration",
@@ -11,6 +14,7 @@ const config = {
   secret: "U|x{V|SCwRB&5|CbUMvB#bo6kPl!IDD^",
   mainResourceToken:
     "F6A893ACFDF50A41064A691F00E98697BAD697FCE825D753B3AF9B4CCFCA12B9",
+  clientResourceToken: `${clientResourceToken}`
 };
 
 const payment = {
@@ -30,7 +34,7 @@ const payment = {
   },
 
   //----> INIT
-  init: async () => {
+  init: async (userToken) => {
     const token = await payment.getToken();
 
     const instance = axios.create({
@@ -38,7 +42,7 @@ const payment = {
       headers: {
         Authorization: `Bearer ${token}`,
         "X-Api-Version": "2",
-        "X-Resource-Token": config.mainResourceToken,
+        "X-Resource-Token": userToken ? userToken : config.mainResourceToken,
         "Content-Type": "application/json",
       },
     });
@@ -63,15 +67,11 @@ const payment = {
   },
 
   //----> GET BALANCE
-  balance: async () => {
+  balance: async (resourceToken = false) => {
     try {
-      const instance = await payment.init();
-      const res = await instance.get("balance", {
-        headers: {
-          "X-Resource-Token":
-            "3AECED12C4C9E7DD1CBDE7AE9B822936BB0B8175DFE160894BD2A69279AF9876",
-        },
-      });
+      const instance = await payment.init(resourceToken);
+      const res = await instance.get("balance");
+      console.log(resourceToken)
       return res.data;
     } catch (err) {
       throw err;
@@ -101,7 +101,7 @@ const payment = {
       const res = await instance.get("charges", {
         headers: {
           "X-Resource-Token":
-            "3AECED12C4C9E7DD1CBDE7AE9B822936BB0B8175DFE160894BD2A69279AF9876",
+            "BFBE2F8263AAD912E3159026ECAC481BEA90165A2C77EA2E35E111AC09B2F32A",
         },
       });
       return res.data;
@@ -128,7 +128,7 @@ const payment = {
       const res = await instance.post("charges", body, {
         headers: {
           "X-Resource-Token":
-            "3AECED12C4C9E7DD1CBDE7AE9B822936BB0B8175DFE160894BD2A69279AF9876",
+            "BFBE2F8263AAD912E3159026ECAC481BEA90165A2C77EA2E35E111AC09B2F32A",
         },
       });
       return res.data;
@@ -145,7 +145,7 @@ const payment = {
         headers: {
           "Content-Type": "application/json",
           "X-Resource-Token":
-            "3AECED12C4C9E7DD1CBDE7AE9B822936BB0B8175DFE160894BD2A69279AF9876",
+            "BFBE2F8263AAD912E3159026ECAC481BEA90165A2C77EA2E35E111AC09B2F32A",
         },
       });
       return res.data;

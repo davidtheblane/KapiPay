@@ -10,6 +10,8 @@ app.use('/css', express.static(__dirname + 'public/css'));
 app.use('/imgs', express.static(__dirname + 'public/imgs'));
 app.use('/js', express.static(__dirname + 'public/js'));
 app.set('views', __dirname + 'src/views')
+app.use(express.json())
+
 
 //Template Engine
 app.set('views', './src/views');
