@@ -1,8 +1,8 @@
-const axios = require('axios')
+import { create } from 'axios';
 
-const API_URL = process.env.API_URL || `http://localhost:5050`;
+const API_URL = process.env.API_USER_URL;
 
-const axiosInstance = axios.create({
+const axiosInstance = create({
   baseURL: API_URL,
 });
 
@@ -18,4 +18,4 @@ const axiosInstance = axios.create({
 //   return config;
 // })
 
-module.exports = axiosInstance;
+export default axiosInstance;
