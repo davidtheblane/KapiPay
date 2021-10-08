@@ -1,6 +1,6 @@
-require('dotenv').config()
 const express = require("express");
 const morgan = require('morgan')
+require('dotenv').config()
 const cors = require('cors');
 const multer = require('multer')
 
@@ -17,8 +17,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 
-app.use('/', require('./routes/users.routes'))
-app.use('/account', require('./routes/account.routes'))
+app.use('/', require('./src/routes/users.routes'))
+app.use('/account', require('./src/routes/account.routes'))
 
 
 
