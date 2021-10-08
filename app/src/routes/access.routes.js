@@ -12,11 +12,16 @@ router.get('/login', (req, res) => {
 
 router.post('/login', (req, res) => {
   console.log(req.body)
-  json(req.body)
+  res.json(req.body)
 })
 
 router.get('/register', (req, res) => {
   res.render("pages/register")
+})
+
+router.post('/register', (req, res) => {
+  console.log(req.body)
+  res.json(req.body)
 })
 
 
