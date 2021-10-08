@@ -4,7 +4,7 @@
   .container {
     width: 500px;
     margin: 0 auto;
-    border: 1px dotted gray;
+    /* border: 1px dotted gray; */
     padding: 1rem;
     margin-top: 3rem;
     margin-bottom: 3rem;
@@ -14,12 +14,15 @@
     width: 400px;
     margin: 0 auto;
   }
+
+  input:valid {
+    border: 1px solid lightgreen;
+  }
 </style>
 
 
 
 <!-- HTML -->
-<html lang="en">
 
 <head>
   <%- include('../partials/head') %>
@@ -59,9 +62,6 @@
     <%- include('../partials/footer') %>
   </footer>
 
-  <script src="js/loginScript.js">
-  </script>
+  <script src="js/loginScript.js"></script>
 
 </body>
-
-</html>
