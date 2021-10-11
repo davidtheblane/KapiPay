@@ -23,7 +23,7 @@ jobs:
           username: ${{secrets.SSH_USERNAME}} # User of the server you want to ssh into
           node-version: '14'
           
-          script: 
+          run: 
             git branch develop
             cd api
             git pull
