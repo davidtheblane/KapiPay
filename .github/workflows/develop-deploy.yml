@@ -25,6 +25,5 @@ jobs:
           
           run: 
             git branch develop
-            cd api
             git pull
             pm2 restart api-develop-server
