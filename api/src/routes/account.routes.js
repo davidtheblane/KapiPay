@@ -21,6 +21,8 @@ router.post('/create', authMiddleware, accountController.createAccount)
 router.post('/charge', authMiddleware, accountController.createCharge)
 router.post('/documents/:id', authMiddleware, accountController.sendDocuments)
 router.post('/payment_card', authMiddleware, accountController.cardPayment)
+router.post('/save_card', authMiddleware, accountController.saveCard)
+
 // router.post('/payment_pix', authMiddleware, accountController.pixPayment)
 
 
