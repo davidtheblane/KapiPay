@@ -8,16 +8,49 @@ module.exports = {
 
   //GET BALANCE
   getUserBalance: async (req, res) => {
-
     try {
-      const resourceToken = req.headers.resourcetoken
-      const balance = await payment.balance(resourceToken);
-      console.log(req.headers)
-
-      return res.status(200).json(balance)
+      const balance = await payment.balance(req.headers.resourcetoken);
+      return res.status(200).send(balance)
 
     } catch (err) {
-      return res.status(400).send({ err: "error finding balance " })
+      return res.status(400).send({ err: err.message })
+    }
+  },
+
+  //STATUS ACCOUNT
+  accountStatus: async (req, res) => {
+    try {
+      const status = await payment.accountStatus(req.headers.resourcetoken);
+      return res.status(200).send(status)
+
+    } catch (err) {
+
+      return res.status(400).send({ err: err.message })
+    }
+  },
+
+  //LIST CHARGES
+  listCharges: async (req, res) => {
+
+    try {
+      const charges = await payment.listCharges(req.headers.resourcetoken);
+      return res.status(200).send(charges)
+
+    } catch (err) {
+      return res.status(400).send({ err: err.message })
+    }
+  },
+
+
+  //LIST CHARGE by Charge Id
+  chargeByChargeId: async (req, res) => {
+
+    try {
+      const charge = await payment.chargeById(req.params.id, req.headers.resourcetoken);
+      return res.status(200).send(charge)
+
+    } catch (err) {
+      return res.status(400).send({ message: err.message })
     }
   },
 
@@ -25,53 +58,40 @@ module.exports = {
   //SEND CHARGE
   createCharge: async (req, res) => {
     try {
-      const body = req.body;
-
-      const charge = await payment.charge(body);
-      res.status(200).json(charge)
-    } catch (err) {
-      console.log(err.message || err.stack);
-    }
-  },
-
-
-  //LIST CHARGES
-  listCharges: async (req, res) => {
-    try {
-      const charges = await payment.listCharges();
-
-      return res.status(200).json(charges)
-
-    } catch (error) {
-      return res.status(400).send({ message: error.message })
-    }
-  },
-
-  //LIST CHARGE by Charge Id
-  chargeByChargeId: async (req, res) => {
-
-    try {
-      const charge = await payment.chargeById(req.params.id);
-
-      return res.status(200).send(charge)
-
-    } catch (error) {
-      return res.status(400).send({ message: error.message })
-    }
-  },
-
-
-  //STATUS ACCOUNT
-  accountStatus: async (req, res) => {
-    try {
-      const status = await payment.accountStatus();
-
-      res.status(200).send(status)
+      const charge = await payment.charge(req.body, req.headers.resourcetoken);
+      res.status(200).send(charge)
 
     } catch (err) {
-      console.log(err.message || err.stack)
+      return res.status(400).send({ message: err.message });
     }
   },
+
+
+  //CARD PAYMENT (INSERT CREDITS)
+  cardPayment: async (req, res) => {
+    try {
+      const card_payment = await payment.cardPayment(req.body, req.headers.resourcetoken)
+      return res.status(200).send(card_payment)
+
+    } catch (err) {
+      return res.status(400).send({ message: err.message });
+    }
+  },
+
+  //SALVAR CARTÃO - (TOKENIZAR)
+  saveCard: async (req, res) => {
+    // const { email } = req.body;
+    try {
+      const card_token = await payment.cardTokenize(req.body, req.headers.resourcetoken)
+      // const saveCardOnUser = await User.updateOne({ email }, { ...req.body, cardHash: card_token })
+      return res.status(200).send(card_token)
+
+    } catch (err) {
+      return res.status(400).send({ message: err.message });
+    }
+  },
+
+
 
 
   //CREATE DIGITAL ACCOUNT
@@ -104,12 +124,11 @@ module.exports = {
   //LIST PENDING DOCUMENTS
   listPendingDocuments: async (req, res) => {
     try {
-      const pend_docs = await payment.listPendingDocuments();
+      const pend_docs = await payment.listPendingDocuments(req.headers.resourcetoken);
+      return res.status(200).send(pend_docs)
 
-      res.status(200).send(pend_docs)
     } catch (err) {
-      res.json(err)
-      console.log(err.message || err.stack)
+      return res.status(400).send({ message: err.message })
     }
   },
 
@@ -117,28 +136,28 @@ module.exports = {
   //SEND DOCUMENTS
   sendDocuments: async (req, res) => {
     try {
-      const send_docs = await payment.sendDocuments(req.files, req.params.id);
-      console.log(send_docs)
-      res.status(200).send(send_docs)
+      const send_docs = await payment.sendDocuments(req.files, req.params.id, req.headers.resourcetoken);
+      console.log(req.params.id)
+      return res.status(200).send(send_docs)
 
     } catch (err) {
-      console.log(err.message || err.stack)
+      return res.status(400).send({ message: err.message })
     }
   },
 
 
-  //CARD PAYMENT (INSERT CREDITS)
-  cardPayment: async (req, res) => {
-    try {
-      const body = req.body
+  // //PAGAMENTO DE CONTAS
+  // billPayment: async (req, res) => {
+  //   try {
+  //     const body = req.body
+  //     const pix_payment = await payment.billPayment(body, req.headers.resourcetoken)
+  //     console.log(pix_payment)
+  //   } catch (err) {
+  //     console.log(err.message || err.stack)
+  //   }
+  // },
 
-      const card_payment = await payment.cardPayment(body)
 
-      res.status(200).json(card_payment)
-    } catch (err) {
-      console.log(err.message || err.stack)
-    }
-  },
 
   //PIX PAYMENT (INSERT CREDITS)
   pixPayment: async (req, res) => {

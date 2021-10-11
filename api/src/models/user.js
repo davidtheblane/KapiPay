@@ -165,6 +165,10 @@ const UserSchema = new mongoose.Schema({
 
   junoResponse: {
     type: Object
+  },
+
+  cardHash: {
+    type: Object
   }
 });
 
