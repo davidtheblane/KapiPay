@@ -25,14 +25,4 @@ router.post('/save_card', authMiddleware, accountController.saveCard)
 
 // router.post('/payment_pix', authMiddleware, accountController.pixPayment)
 
-
-
-
-
-
-
-
-
-
-
 module.exports = router
