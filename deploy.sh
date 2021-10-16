@@ -2,4 +2,5 @@
 
 cd KapiPay
 git pull
-sudo pm2 restart 0
+npm ci
+NODE_ENV=development pm2 restart 0 --update-env
