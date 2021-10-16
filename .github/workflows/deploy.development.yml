@@ -8,13 +8,7 @@ on:
     branches: [develop]
 
 jobs:
-  CI:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update main branch
-      - run: git pull origin main
-  CD:
-    needs: [CI]
+  Development:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node.js
@@ -25,7 +19,7 @@ jobs:
       - name: Deploy to Digital Ocean
         uses: actions/setup-node@v2
         with:
-          command: bash KapiPay deploy.sh
+          command: bash deploy.sh
           host: ${{secrets.SSH_HOST}} #IP address of the server
           port: ${{secrets.SSH_PORT}} #server PORT
           username: ${{secrets.SSH_USERNAME}} # User of the server you want to ssh into
