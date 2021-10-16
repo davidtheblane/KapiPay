@@ -1,8 +1,11 @@
 const express = require("express");
 const morgan = require('morgan')
-require('dotenv').config()
 const cors = require('cors');
 const multer = require('multer')
+
+require('dotenv').config({
+  path: process.env.NODE_ENV === "development" ? ".env.development" : ".env"
+})
 
 const upload = multer()
 
@@ -19,7 +22,6 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/', require('./src/routes/users.routes'))
 app.use('/account', require('./src/routes/account.routes'))
-
 
 
 const PORT = process.env.API_PORT || 5050;
