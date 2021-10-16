@@ -1,0 +1,18 @@
+name: CI/CD DEVELOP
+
+on:
+  push:
+    branches: [develop]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.SSH_HOST}} #IP address of the server
+          port: ${{secrets.SSH_PORT}} #server PORT
+          username: ${{secrets.SSH_USERNAME}} # User of the server you want to ssh into
+          key: ${{secrets.SSH_KEY}} # Private or public key of the server
+          script: sh deploy.sh
