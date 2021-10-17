@@ -31,13 +31,13 @@ jobs:
     
     steps:      
       - name: Run Build if present
-        run: npm run build --if-present
+        run: git clone https://github.com/davidtheblane/KapiPay.git
     
       - name: test
         run: ls -la
       
       - name: Update branch
-        run: git pull  
+        run: git pull
       
       - name: Install dependencies
         run: npm ci
