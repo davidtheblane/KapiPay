@@ -16,24 +16,26 @@ jobs:
     #needs: [CI]
     runs-on: ubuntu-latest
     steps:
-      - name: Execute SSH commmands on remote server
-        uses: JimCronqvist/action-ssh@master
-        with:
-          hosts:  "deploy@143.198.188.156:5050"
-          privateKey: ${{ secrets.SSH_PRIVATE_KEY}}
-          command: ls -la
-        
         #/////EASINGTHEMES
- #   - name: Deploy to Production server
- #     uses: easingthemes/ssh-deploy@main
-  #    env:
-   #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY}}
-       # ARGS: "-rltgoDzvO" 
-       # SOURCE: "dist/"
-    #    REMOTE_HOST: '143.198.188.156'
-     #   REMOTE_USER: 'deploy'
-      #  TARGET: ${{ secrets.REMOTE_TARGET }}
-      #  EXCLUDE: "/dist/, /node_modules/"
+    - name: Deploy to Production server
+      uses: easingthemes/ssh-deploy@main
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY}}
+        ARGS: "-rltgoDzvO" 
+        SOURCE: "dist/"
+        REMOTE_HOST: '143.198.188.156'
+        REMOTE_USER: 'deploy'
+        TARGET: ${{ secrets.REMOTE_TARGET }}
+        EXCLUDE: "/dist/, /node_modules/"
+      
+      
+      # ////// JIM CRONSQUIST
+#      - name: Execute SSH commmands on remote server
+ #       uses: JimCronqvist/action-ssh@master
+  #      with:
+   #       hosts:  "deploy@143.198.188.156:5050"
+    #      privateKey: ${{ secrets.SSH_PRIVATE_KEY}}
+     #     command: ls -la
     
     #/////APPLEBOY
     
