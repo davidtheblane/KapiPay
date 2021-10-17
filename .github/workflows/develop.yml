@@ -21,7 +21,7 @@ jobs:
       with:
         host: ${{ secrets.USER_AND_HOST }}
         key: ${{secrets.KEY}}
-        command: bash deploy.sh
+        command: ls -l
     
     
     
