@@ -1,6 +1,6 @@
 
 # KapiPay
-![example workflow](https://github.com/davidtheblane/KapiPay/workflows/main.yml/badge.svg)
+![example workflow](https://github.com/davidtheblane/KapiPay/actions/workflows/develop.yml/badge.svg)
 ![develop deploy status](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?branch=develop)
 ![production deploy status](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?branch=main)
 
