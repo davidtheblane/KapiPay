@@ -1,28 +1,36 @@
-name: CI-CD-Production
+## This workflow updates the api development environment of kapipay, with a second database for tests.
+
+name: CI/CD PRODUCTION
 
 on:
   push:
     branches: [main]
-
+      
 jobs:
   CI:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-      - name: Update main branch
-      - run: git pull origin main
+      - name: Checkout Branch        
+        uses: actions/checkout@v2 
+      
   CD:
     needs: [CI]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    
     steps:
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: "14.x"
-
-      - name: Deploy to Digital Ocean
-        uses: actions/setup-node@v2
-        with:
-          command: bash KapiPay deploy.sh
-          host: ${{secrets.SSH_HOST}} #IP address of the server
-          key: ${{secrets.SSH_KEY}} # Private or public key of the server
-          username: ${{secrets.SSH_USERNAME}} # User of the server you want to ssh into
+          node-version: "14.x"  
+      
+      - name: Update branch
+        run: git pull  
+      
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Restart Server
+        run: pm2 restart 0 --update-env
+        
+     #- name: Run bash script
+     #  run: bash deploy.sh   
