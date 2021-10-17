@@ -23,15 +23,15 @@ jobs:
         uses: easingthemes/ssh-deploy@v2.2.11
         with:
           # Private Key
-          SSH_PRIVATE_KEY: ${{secrets.KEY}}
+          SSH_PRIVATE_KEY: ${{ secrets.KEY }}
           # Remote host
-          REMOTE_HOST: ${{secrets.HOST}}
+          REMOTE_HOST: ${{ secrets.HOST }}
           # Remote user
-          REMOTE_USER: ${{secrets.USERNAME}}
+          REMOTE_USER: ${{ secrets.USERNAME }}
           # Remote port
           # REMOTE_PORT: ${{secrets.PORT}}
-          TARGET: /home/develop
-          ARGS: sh KapiPay/deploy.sh
+          # TARGET: /home/develop
+          # ARGS: sh KapiPay/deploy.sh
           
               #SOURCE: # optional, default is 
               # Target directory
