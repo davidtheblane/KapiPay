@@ -21,7 +21,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: "14.x"  
+          node-version: "14.x"
+          
+      - name: test
+        run: ls -la     
       
       - name: Update branch
         run: git pull  
