@@ -30,7 +30,7 @@ jobs:
        local: my-repo
        remote: ~/target/directory
        host: 143.198.188.156
-       port: 59666
+       port: 5050
        username: deploy
        privateKey: ${{secrets.SSH_PRIVATE_KEY}}
        run: ls -la
