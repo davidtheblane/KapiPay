@@ -28,7 +28,7 @@ jobs:
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.SSH_HOST_SERVER }}
-        username: ${{ secrets.SSH_USERNAME }}
+        username: root
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         password: ${{ secrets.SSH_USER_PASSWORD }}
