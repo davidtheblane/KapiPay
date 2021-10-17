@@ -16,6 +16,19 @@ jobs:
     #needs: [CI]
     runs-on: ubuntu-latest
     steps:
+    - name: Deploy to Production server
+      uses: easingthemes/ssh-deploy@main
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        ARGS: "-rltgoDzvO"
+        SOURCE: "dist/"
+        REMOTE_HOST: ${{ secrets.SSH_HOST_SERVER }}
+        REMOTE_USER: ${{ secrets.SSH_USERNAME }}
+      #  TARGET: ${{ secrets.REMOTE_TARGET }}
+        EXCLUDE: "/dist/, /node_modules/"
+    
+    #/////APPLEBOY
+    
     #- name: executing remote ssh commands using ssh key
     #  uses: appleboy/ssh-action@master
      # with:
@@ -24,17 +37,19 @@ jobs:
        # key: ${{ secrets.SSH_PRIVATE_KEY }}
        # script: ls -la
        
-    - name: copy file via ssh key
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SSH_HOST_SERVER }}
-        username: root
-        port: ${{ secrets.SSH_PORT }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        password: ${{ secrets.SSH_USER_PASSWORD }}
-        source: "tests/a.txt,tests/b.txt"
-        target: ~/
+   # - name: copy file via ssh key
+   #   uses: appleboy/scp-action@master
+    #  with:
+     #   host: ${{ secrets.SSH_HOST_SERVER }}
+      #  username: root
+       # port: ${{ secrets.SSH_PORT }}
+        #key: ${{ secrets.SSH_PRIVATE_KEY }}
+       # password: ${{ secrets.SSH_USER_PASSWORD }}
+       # source: "tests/a.txt,tests/b.txt"
+       # target: ~/
         
+        
+        #//// GARYGROSSGARTEN
 #    - name: Copy folder content recursively to remote
  #     uses: garygrossgarten/github-action-scp@release
   #    with:
