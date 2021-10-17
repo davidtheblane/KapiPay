@@ -19,7 +19,7 @@ jobs:
       - name: Setup SSH
         uses: MrSquaare/ssh-setup-action@v1
         with:
-          host: github.com
+          host: 143.198.188.156
           private-key: ${{ secrets.SSH_PRIVATE_KEY}}
       - name: test
         run: ls -la
