@@ -16,11 +16,13 @@ jobs:
     #needs: [CI]
     runs-on: ubuntu-latest
     steps:
-    - uses: kevin-leptons/ssh_action@v1
-      with:
-        host: '143.198.188.156'
-        key: ${{ secrets.SSH_PRIVATE_KEY}}
-        command: ls -la
+      - name: Setup SSH
+        uses: MrSquaare/ssh-setup-action@v1
+        with:
+          host: github.com
+          private-key: ${{ secrets.SSH_PRIVATE_KEY}}
+      - name: test
+        run: ls -la
         
         #/////EASINGTHEMES
  #   - name: Deploy to Production server
