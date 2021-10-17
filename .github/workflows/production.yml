@@ -7,13 +7,13 @@ on:
     branches: [ main ]
       
 jobs:
-  CI:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy
-        uses: actions/setup-node@v2
+  #CI:
+   # runs-on: ubuntu-latest
+    #steps:
+     # - name: Deploy
+      #  uses: actions/setup-node@v2
   CD:
-    needs: [CI]
+    #needs: [CI]
     runs-on: ubuntu-latest
     steps:
     #- name: executing remote ssh commands using ssh key
@@ -23,15 +23,25 @@ jobs:
       #  username: 'deploy'
        # key: ${{ secrets.SSH_PRIVATE_KEY }}
        # script: ls -la
-        
-    - name: Copy folder content recursively to remote
-      uses: garygrossgarten/github-action-scp@release
+       
+    - name: copy file via ssh key
+      uses: appleboy/scp-action@master
       with:
-       local: my-repo
-       remote: ~/home/deploy
-       host: '143.198.188.156'
-       port: 22
-       username: deploy
-       password: ${{secrets.SSH_USER_PASSWORD}}
-       privateKey: ${{secrets.SSH_PRIVATE_KEY}}
-       run: ls -la
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        port: ${{ secrets.PORT }}
+        key: ${{ secrets.KEY }}
+        source: "tests/a.txt,tests/b.txt"
+        target: ~/
+        
+#    - name: Copy folder content recursively to remote
+ #     uses: garygrossgarten/github-action-scp@release
+  #    with:
+   #    local: my-repo
+    #   remote: ~/home/deploy
+     #  host: '143.198.188.156'
+      # port: 22
+       #username: deploy
+      # password: ${{secrets.SSH_USER_PASSWORD}}
+      # privateKey: ${{secrets.SSH_PRIVATE_KEY}}
+      # run: ls -la
