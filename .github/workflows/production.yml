@@ -16,13 +16,12 @@ jobs:
     #needs: [CI]
     runs-on: ubuntu-latest
     steps:
-      - name: Setup SSH
-        uses: MrSquaare/ssh-setup-action@v1
+      - name: Execute SSH commmands on remote server
+        uses: JimCronqvist/action-ssh@master
         with:
-          host: 143.198.188.156
-          private-key: ${{ secrets.SSH_PRIVATE_KEY}}
-      - name: test
-        run: ls -la
+          hosts: '143.198.188.156'
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY}}
+          command: ls -la
         
         #/////EASINGTHEMES
  #   - name: Deploy to Production server
