@@ -26,7 +26,7 @@ jobs:
           ssh-private-key: ${{secrets.KEY}}
           # Hostname or IP to add to the known hosts file
           ssh-host: ${{secrets.HOST}}
-          script: sh KapiPay/deploy.sh  
+          shell: bash KapiPay/deploy.sh
           # Port for key-scanning the server
          # ssh-port: # optional
               
