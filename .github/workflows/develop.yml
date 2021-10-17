@@ -16,20 +16,29 @@ jobs:
   CD:
     needs: [CI]
     runs-on: ubuntu-latest
-    steps:   
-        - name: SSH Setup
+    steps:
+    - uses: kevin-leptons/ssh_action@v1
+      with:
+        host: ${{ secrets.USER_AND_HOST }}
+        key: ${{secrets.KEY}}
+        command: bash deploy.sh
+    
+    
+    
+    #steps:   
+     #   - name: SSH Setup
           # You may pin to the exact commit or the version.
           # uses: MrSquaare/ssh-setup-action@8ed91aadfe85793a7db7d339cab95f07c50686e4
-          uses: MrSquaare/ssh-setup-action@v1.0.1
-          with:
+      #    uses: MrSquaare/ssh-setup-action@v1.0.1
+       #   with:
             # SSH hosts
-            host: ${{secrets.HOST}}
+        #    host: ${{secrets.HOST}}
             # SSH private key
-            private-key: ${{secrets.KEY}} 
+         #   private-key: ${{secrets.KEY}} 
             # SSH private key name
             #private-key-name: # optional, default is id_rsa
-        - name: update repository            
-          run: git pull
+       # - name: update repository            
+       #   run: git pull
                   
               
               #//////
