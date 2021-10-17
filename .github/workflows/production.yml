@@ -19,8 +19,8 @@ jobs:
     - name: Deploy to Production server
       uses: easingthemes/ssh-deploy@main
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-       # ARGS: "-rltgoDzvO"
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY}}
+       # ARGS: "-rltgoDzvO" 
        # SOURCE: "dist/"
         REMOTE_HOST: '143.198.188.156'
         REMOTE_USER: 'deploy'
