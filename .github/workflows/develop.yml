@@ -30,15 +30,16 @@ jobs:
           REMOTE_USER: ${{secrets.USERNAME}}
           # Remote port
           # REMOTE_PORT: ${{secrets.PORT}}
-          # Source directory
-          #SOURCE: # optional, default is 
-          script: sh KapiPay/deploy.sh
+          TARGET: /home/develop
+          ARGS: sh KapiPay/deploy.sh
+          
+              #SOURCE: # optional, default is 
               # Target directory
-               # TARGET: # optional, default is /home/REMOTE_USER/
+              # TARGET: # optional, default is /home/REMOTE_USER/
               # Arguments to pass to rsync
-             # ARGS: # optional, default is -rltgoDzvO
+              # ARGS: # optional, default is -rltgoDzvO
               # An array of folder to exclude
-             # EXCLUDE: # optional, default is 
+              # EXCLUDE: # optional, default is 
               
               #//////
               # - name: executing remote ssh commands using ssh key
