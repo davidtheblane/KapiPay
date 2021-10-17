@@ -18,10 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@master
+        # uses: appleboy/ssh-action@master
+        uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
         with:
           host: ${{secrets.HOST}}
-          username: ${{secrets.USERNAME}}
+          user: ${{secrets.USERNAME}}
           key: ${{secrets.KEY}} 
-          port: ${{secrets.PORT}} 
+          # port: ${{secrets.PORT}} 
           script: sh KapiPay/deploy.sh
+
