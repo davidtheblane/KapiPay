@@ -1,49 +1,27 @@
-## This workflow updates the api development environment of kapipay, with a second database for tests.
-
-name: CI/CD PRODUCTION
+name: CI/CD Production
 
 on:
   push:
-    branches: [main]
-  pull_request: 
-    branches: [main]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
       
 jobs:
   CI:
-    runs-on: self-hosted
-    
-    strategy:
-      matrix:
-        node-version: [14.x]
-        
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Branch        
-        uses: actions/checkout@v2 
-        
-      - name: Setup Node.js ${{matrix.node-version}}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{matrix.node-version}}
-      
+      - uses: actions/checkout@v2
+      - name: Deploy
+        uses: actions/setup-node@v2
   CD:
     needs: [CI]
-    runs-on: self-hosted
-    
-    steps:      
-      - name: Run Build if present
-        run: git clone https://github.com/davidtheblane/KapiPay.git
-    
-      - name: test
-        run: ls -la
-      
-      - name: Update branch
-        run: git pull
-      
-      - name: Install dependencies
-        run: npm ci
-        
-      - name: Restart Server
-        run: pm2 restart 0 --update-env
-        
-     #- name: Run bash script
-     #  run: bash deploy.sh   
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST_SERVER }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: sh deploy.sh
