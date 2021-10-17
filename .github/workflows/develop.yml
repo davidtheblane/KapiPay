@@ -1,3 +1,5 @@
+## This workflow updates the api development environment of kapipay, with a second database for tests.
+
 name: CI/CD DEVELOP
 
 on:
@@ -14,23 +16,12 @@ jobs:
   CD:
     needs: [CI]
     runs-on: self-hosted
-    strategy:
-      matrix:
-        node: [ '12', '14', '16' ]
-    name: Node ${{ matrix.node }} sample
+    
     steps:
-      - name: Setup node
-        uses: actions/setup-node@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node }}
-    
-    
-    
-    #steps:
-     # - name: Setup Node.js
-      #  uses: actions/setup-node@v1
-       # with:
-        #  node-version: "14.x"  
+          node-version: "14.x"  
       
       - name: Update branch
         run: git pull  
@@ -42,7 +33,7 @@ jobs:
         run: NODE_ENV=development pm2 restart 0 --update-env
         
      #- name: Run bash script
-     #  run: git pull    
+     #  run: bash deploy.sh    
          
          
  
