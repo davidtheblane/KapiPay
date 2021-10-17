@@ -3,54 +3,31 @@ name: CI/CD DEVELOP
 on:
   push:
     branches: [develop]
-  pull_request:
-    branches: [ develop ]
-    
+      
 jobs:
   CI:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
       - name: Deploy
         uses: actions/setup-node@v2
   CD:
     needs: [CI]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-    - uses: kevin-leptons/ssh_action@v1
-      with:
-        host: ${{ secrets.USER_AND_HOST }}
-        key: ${{secrets.KEY}}
-        command: ls -l
-    
-    
-    
-    #steps:   
-     #   - name: SSH Setup
-          # You may pin to the exact commit or the version.
-          # uses: MrSquaare/ssh-setup-action@8ed91aadfe85793a7db7d339cab95f07c50686e4
-      #    uses: MrSquaare/ssh-setup-action@v1.0.1
-       #   with:
-            # SSH hosts
-        #    host: ${{secrets.HOST}}
-            # SSH private key
-         #   private-key: ${{secrets.KEY}} 
-            # SSH private key name
-            #private-key-name: # optional, default is id_rsa
-       # - name: update repository            
-       #   run: git pull
-                  
-              
-              #//////
-              # - name: executing remote ssh commands using ssh key
-        # uses: appleboy/ssh-action@master
-       # uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
-      #  with:
-         # host: ${{secrets.HOST}}
-         # user: ${{secrets.USERNAME}}
-         # key: ${{secrets.KEY}} 
-          # port: ${{secrets.PORT}} 
-         # script: sh KapiPay/deploy.sh
+      - name: Update develop branch
+        run: git pull
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: test
+        run: ls -la
          
          
  
