@@ -18,16 +18,18 @@ jobs:
     steps:
      #  //// GARYGROSSGARTEN
      - name: Run SSH command
-       uses: garygrossgarten/github-action-ssh@v0.6.3
+       uses: garygrossgarten/github-action-ssh@release
        with:
+         command: ls -la
+         host: ${{ SSH_HOST_SERVER }}
+         username: deploy
+         privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+         
       #   local: my-repo
       #   remote: ~/home/deploy
-         host: '143.198.188.156'
       #   port: 22
-         username: deploy
-         password: ${{secrets.SSH_USER_PASSWORD}}
-         privateKey: ${{secrets.SSH_PRIVATE_KEY}}
-         command: ls -la
+      #   password: ${{secrets.SSH_USER_PASSWORD}}
+         
 
       
       
