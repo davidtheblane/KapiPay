@@ -11,10 +11,9 @@ const CompanySchema = new mongoose.Schema({
     require: true,
   },
 
-  //O nome do tipo da compania (ex: agua,luz...)
-  companyType: {
+  invoiceId: {
     type: mongoose.SchemaTypes.ObjectId,
-    ref: 'CompanyType'
+    ref: 'Invoice._id'
   }
 });
 

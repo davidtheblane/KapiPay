@@ -2,26 +2,33 @@ const mongoose = require('../database');
 
 
 const InvoiceSchema = new mongoose.Schema({
-  value: {
+  amount: {
     type: Number,
+    require: true,
+  },
+  dueDate: {
+    type: String,
+    require: true,
+  },
+  description: {
+    type: String,
+    require: true,
+  },
+  //Cartão ou Boleto
+  paymentMethod: {
+    type: String,
     require: true,
   },
   paymentCode: {
     type: String,
     require: true,
   },
-
-  //O nome da Cia
-  companyName: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: 'CompanyType'
+  //Retorno da Juno
+  paymentStatus: {
+    type: String,
+    require: true,
   },
 
-  //O nome do tipo da compania (ex: agua,luz...)
-  companyType: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: 'CompanyType'
-  }
 });
 
 const Invoice = mongoose.model("Invoice", InvoiceSchema);
