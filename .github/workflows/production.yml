@@ -21,7 +21,7 @@ jobs:
        uses: garygrossgarten/github-action-ssh@release
        with:
          command: ls -la
-         host: ${{ SSH_HOST_SERVER }}
+         host: ${{ secrets.SSH_HOST_SERVER }}
          username: deploy
          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
          
