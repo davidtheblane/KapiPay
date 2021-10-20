@@ -1,5 +1,6 @@
 const payment = require('../resources/lib/payment/juno');
 const User = require('../models/user');
+const UserAccount = require('../models/userAccount')
 const axios = require('axios');
 
 
@@ -14,7 +15,7 @@ module.exports = {
 
     } catch (err) {
       console.log(err)
-      return res.status(400).send({ err: err.message })
+      return res.status(err.status).send({ message: err });
     }
   },
 
@@ -26,7 +27,7 @@ module.exports = {
 
     } catch (err) {
 
-      return res.status(400).send({ err: err.message })
+      return res.status(err.status).send({ message: err });
     }
   },
 
@@ -38,7 +39,7 @@ module.exports = {
       return res.status(200).send(charges)
 
     } catch (err) {
-      return res.status(400).send({ err: err.message })
+      return res.status(err.status).send({ message: err });
     }
   },
 
@@ -51,7 +52,7 @@ module.exports = {
       return res.status(200).send(charge)
 
     } catch (err) {
-      return res.status(400).send({ message: err.message })
+      return res.status(err.status).send({ message: err });
     }
   },
 
@@ -63,7 +64,7 @@ module.exports = {
       res.status(200).send(charge)
 
     } catch (err) {
-      return res.status(400).send({ message: err.message });
+      return res.status(err.status).send({ message: err });
     }
   },
 
@@ -75,7 +76,7 @@ module.exports = {
       return res.status(200).send(card_payment)
 
     } catch (err) {
-      return res.status(400).send({ message: err.message });
+      return res.status(err.status).send({ message: err });
     }
   },
 
@@ -88,36 +89,71 @@ module.exports = {
       return res.status(200).send(card_token)
 
     } catch (err) {
-      return res.status(400).send({ message: err.message });
+      return res.status(err.status).send({ message: err });
     }
   },
 
+  ////CREATE DIGITAL ACCOUNT
+  // createAccount: async (req, res) => {
+  //   const { email } = req.body;
 
 
+  //   try {
+  //     if (await User.findOne({ email })) {
+  //       // criação de conta digital
+  //       const accountCreatedResponse = await payment.createAccount(req.body);
 
+  //       // criação de conta no bd, somente se sucesso
+  //       // fazer uma validação aqui para evitar duplicidade
+  //       const userDigitalAccount = await User.updateOne({ email }, { ...req.body, junoResponse: accountCreatedResponse })
+
+  //       return res.status(200).send({
+  //         accountCreatedResponse,
+  //         userDigitalAccount
+  //       })
+  //     }
+  //     return res.status(400).send({ error: "User does not exist" });
+
+  //   } catch (err) {
+  //     return res.status(err.status).send({ message: err });
+
+  //   }
+  // },
+
+  ///////////
+
+  //TESTE NEW IMPLEMENTATION
   //CREATE DIGITAL ACCOUNT
   createAccount: async (req, res) => {
     const { email } = req.body;
 
-
     try {
+      // verificando se o user existe
       if (await User.findOne({ email })) {
-        // criação de conta digital
+
+        // enviando dados para criação de conta digital
         const accountCreatedResponse = await payment.createAccount(req.body);
 
         // criação de conta no bd, somente se sucesso
-        // fazer uma validação aqui para evitar duplicidade
-        const userDigitalAccount = await User.updateOne({ email }, { ...req.body, junoResponse: accountCreatedResponse })
+        const userData = await User.updateOne({ email }, { ...req.body })
+        console.log(`Está indo pelo userData ${userData}`)
+
+        const userAccountData = await UserAccount.updateOne({ userId }, { ...req.body, junoResponse: accountCreatedResponse })
 
         return res.status(200).send({
           accountCreatedResponse,
-          userDigitalAccount
+          userData,
+          userAccountData
         })
+
+
       }
       return res.status(400).send({ error: "User does not exist" });
 
     } catch (err) {
-      return res.status(400).send({ message: err.message })
+      // throw err;
+
+      return res.status(err.status).send({ message: err });
 
     }
   },
@@ -130,7 +166,7 @@ module.exports = {
       return res.status(200).send(pend_docs)
 
     } catch (err) {
-      return res.status(400).send({ message: err.message })
+      return res.status(err.status).send({ message: err });
     }
   },
 
@@ -143,7 +179,7 @@ module.exports = {
       return res.status(200).send(send_docs)
 
     } catch (err) {
-      return res.status(400).send({ message: err.message })
+      return res.status(err.status).send({ message: err });
     }
   },
 
@@ -169,6 +205,7 @@ module.exports = {
       console.log(pix_payment)
     } catch (err) {
       console.log(err.message || err.stack)
+      return res.status(err.status).send({ message: err })
     }
   }
 
