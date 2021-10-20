@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  cpf: {
+  document: {
     type: String,
     // required: true,
   },

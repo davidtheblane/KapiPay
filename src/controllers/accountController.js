@@ -125,37 +125,44 @@ module.exports = {
   //TESTE NEW IMPLEMENTATION
   //CREATE DIGITAL ACCOUNT
   createAccount: async (req, res) => {
-    const { email } = req.body;
-
     try {
-      // verificando se o user existe
+      const { email } = req.body;
+      // confirmando existencia do usuario
       if (await User.findOne({ email })) {
+        console.log('usuario existe, criando conta...')
+        // criando conta digital
+        // const accountCreatedResponse = await payment.createAccount(req.body);
 
-        // enviando dados para criação de conta digital
-        const accountCreatedResponse = await payment.createAccount(req.body);
+        // atualizando collection User com dados enviados
+        console.log("atualizando model de usuario...")
+        const userData = await User.updateOne({ email }, req.body)
 
-        // criação de conta no bd, somente se sucesso
-        const userData = await User.updateOne({ email }, { ...req.body })
-        console.log(`Está indo pelo userData ${userData}`)
+        console.log(`user data ${JSON.stringify(userData)}`)
+        console.log("atualizou! model de usuario...!")
 
-        const userAccountData = await UserAccount.updateOne({ userId }, { ...req.body, junoResponse: accountCreatedResponse })
+        const userId = await User.findOne({ _id })
+        console.log(`USER ID ${JSON.stringify(userId)}`)
+
+
+        // atualizando collection UserAccount no bd 
+        const accountData = await UserAccount.create({ userId }, req.body)
+        // const accountData = await UserAccount.create({ userId: _id }, { ...req.body, junoResponse: accountCreatedResponse })
+
+        console.log(`account data ${JSON.stringify(accountData)}`)
 
         return res.status(200).send({
           accountCreatedResponse,
           userData,
-          userAccountData
+          accountData
         })
-
-
+      } else {
+        return res.status(400).send({ error: "Usuário não tem registro" });
       }
-      return res.status(400).send({ error: "User does not exist" });
 
     } catch (err) {
-      // throw err;
-
-      return res.status(err.status).send({ message: err });
-
+      return res.status(400).send({ message: err.stack })
     }
+
   },
 
 
