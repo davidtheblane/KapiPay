@@ -44,7 +44,7 @@ const payment = {
 
       return res.data.access_token;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -67,7 +67,6 @@ const payment = {
 
   //----> GET BALANCE
   balance: async (resourcetoken) => {
-
     try {
       const instance = await payment.init();
       const res = await instance.get("balance", {
@@ -78,7 +77,7 @@ const payment = {
 
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -94,7 +93,7 @@ const payment = {
 
       return res.data
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -109,7 +108,7 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -124,7 +123,7 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -139,7 +138,7 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -154,7 +153,7 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -169,21 +168,26 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
 
   //----> CREATE DIGITAL ACCOUNT - utiliza JSON no corpo
   createAccount: async (body) => {
-    const instance = await payment.init();
-    const res = await instance.post("digital-accounts", body, {
-      headers: {
-        "X-Resource-Token": config.mainResourceToken,
-      },
-    });
-    console.log(res.data);
-    return res.data;
+    try {
+      const instance = await payment.init();
+      const res = await instance.post("digital-accounts", body, {
+        headers: {
+          "X-Resource-Token": config.mainResourceToken,
+        },
+      });
+      console.log(res.data);
+      return res.data;
+    } catch (err) {
+      throw err.response.data;
+    }
+
   },
 
 
@@ -198,7 +202,7 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -226,7 +230,7 @@ const payment = {
         });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 

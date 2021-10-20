@@ -4,7 +4,7 @@ const UserAccountSchema = new mongoose.Schema({
   //ID do usuário
   userId: {
     type: mongoose.SchemaTypes.ObjectId,
-    ref: 'User._id'
+    ref: `User._id`
   },
   type: {
     type: String,

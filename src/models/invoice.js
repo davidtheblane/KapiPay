@@ -1,6 +1,5 @@
 const mongoose = require('../database');
 
-
 const InvoiceSchema = new mongoose.Schema({
   amount: {
     type: Number,

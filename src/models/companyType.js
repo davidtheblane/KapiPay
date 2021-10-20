@@ -9,7 +9,7 @@ const CompanyTypeSchema = new mongoose.Schema({
 
   CompanyId: {
     type: mongoose.SchemaTypes.ObjectId,
-    ref: 'Company._id'
+    ref: `Company._id`
   }
 });
 
