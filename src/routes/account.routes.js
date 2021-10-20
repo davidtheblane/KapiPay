@@ -2,9 +2,7 @@ const { Router } = require('express');
 const authMiddleware = require('../middlewares/auth')
 const accountController = require('../controllers/accountController');
 const multer = require('multer')
-
 const upload = multer()
-
 const router = new Router()
 
 

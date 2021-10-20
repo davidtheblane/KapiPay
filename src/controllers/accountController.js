@@ -13,6 +13,7 @@ module.exports = {
       return res.status(200).send(balance)
 
     } catch (err) {
+      console.log(err)
       return res.status(400).send({ err: err.message })
     }
   },
@@ -98,13 +99,14 @@ module.exports = {
   createAccount: async (req, res) => {
     const { email } = req.body;
 
+
     try {
       if (await User.findOne({ email })) {
         // criação de conta digital
         const accountCreatedResponse = await payment.createAccount(req.body);
 
         // criação de conta no bd, somente se sucesso
-        //fazer uma validação aqui para evitar duplicidade
+        // fazer uma validação aqui para evitar duplicidade
         const userDigitalAccount = await User.updateOne({ email }, { ...req.body, junoResponse: accountCreatedResponse })
 
         return res.status(200).send({
