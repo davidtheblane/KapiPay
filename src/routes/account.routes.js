@@ -22,7 +22,9 @@ router.post('/documents/:id', authMiddleware, accountController.sendDocuments)
 router.post('/payment_card', authMiddleware, accountController.cardPayment)
 router.post('/save_card', authMiddleware, accountController.saveCard)
 
-// router.post('/invoice/insert', authMiddleware, invoiceController.insert)
+router.get('/invoices', authMiddleware, invoiceController.invoices)
+router.post('/invoice_insert', authMiddleware, invoiceController.invoiceInsert)
+
 
 // router.post('/payment_pix', authMiddleware, accountController.pixPayment)
 
