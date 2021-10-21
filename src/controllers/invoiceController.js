@@ -35,17 +35,18 @@ module.exports = {
     const { charge } = req.body
 
     try {
+      // const invoiceCreate = await payment.charge(req.body, req.headers.resourcetoken);
 
-      const invoiceCreate = await payment.charge(req.body, req.headers.resourcetoken);
-
-      const storeInvoice = await Invoice.create({ charge }, { ...req.body, junoResponse: invoiceCreate })
-
-      console.log(`Criando Fatura: ${JSON.stringify(invoiceCreate._embedded)}`)
-      console.log(`Armazenando Fatura: ${(storeInvoice)}`)
+      const storeInvoice = await Invoice.create({ charge }, { ...req.body })
+      // const storeInvoice = await Invoice.findOneAndUpdate({ charge }, { ...req.body, junoResponse: invoiceCreate })
 
 
+      // console.log(`Criando Fatura: ${JSON.stringify(invoiceCreate._embedded)}`)
+      // console.log(`Armazenando Fatura: ${(storeInvoice)}`)
 
-      return res.status(200).send(invoiceCreate)
+
+
+      return res.status(200).send(storeInvoice)
 
     } catch (err) {
       return res.status(err.status || 400).send({ message: err.stack || console.log(err.stack) });
