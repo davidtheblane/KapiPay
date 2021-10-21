@@ -123,31 +123,25 @@ module.exports = {
   //TESTE NEW IMPLEMENTATION
   //CREATE DIGITAL ACCOUNT
   createAccount: async (req, res) => {
+
     try {
       const { email } = req.body;
+      const userModel = await User.findOne({ email })
+
       // confirmando existencia do usuario
-      if (await User.findOne({ email })) {
-        console.log('usuario existe, criando conta...')
+      if (userModel) {
         // criando conta digital
-        // const accountCreatedResponse = await payment.createAccount(req.body);
+        const accountCreatedResponse = await payment.createAccount(req.body);
+        console.log('pré cadastro ok, conta digital criada...')
 
         // atualizando collection User com dados enviados
-        console.log("atualizando model de usuario...")
-        const userData = await User.updateOne({ email }, { ...req.body })
-        console.log("atualizou! model de usuario...!")
-
-
-        //pegando referencia de User._id e passando pra userId
-        const userId = await User.findOne({ _id })
+        const userData = await User.findOneAndUpdate({ email }, { ...req.body })
+        console.log("userData collection atualizado...!")
 
         // atualizando collection UserAccount no bd 
-        const accountData = await UserAccount.create({ userId: userId }, { ...req.body })
-        // const accountData = await UserAccount.create({ userId: _id }, { ...req.body, junoResponse: accountCreatedResponse })
-
-
-
-        console.log(`user data ${{ userData: { userData } }}`)
-        console.log(`account data ${JSON.stringify(accountData)}`)
+        // const accountData = await UserAccount.create({ userId: userModel._id }, { ...req.body })
+        const accountData = await UserAccount.create({ userId: userModel._id }, { ...req.body, junoResponse: accountCreatedResponse })
+        console.log("accountData collection atualizado...!")
 
         return res.status(200).send({
           // accountCreatedResponse,
