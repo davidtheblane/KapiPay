@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const authMiddleware = require('../middlewares/auth')
 const accountController = require('../controllers/accountController');
+const invoiceController = require('../controllers/invoiceController')
 const multer = require('multer')
 const upload = multer()
 const router = new Router()
@@ -20,6 +21,8 @@ router.post('/charge', authMiddleware, accountController.createCharge)
 router.post('/documents/:id', authMiddleware, accountController.sendDocuments)
 router.post('/payment_card', authMiddleware, accountController.cardPayment)
 router.post('/save_card', authMiddleware, accountController.saveCard)
+
+// router.post('/invoice/insert', authMiddleware, invoiceController.insert)
 
 // router.post('/payment_pix', authMiddleware, accountController.pixPayment)
 
