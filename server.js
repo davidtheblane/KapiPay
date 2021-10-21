@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 
 Sentry.init(sentryConfig);
 app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler())
+app.use(Sentry.Handlers.tracingHandler());
 
 
 

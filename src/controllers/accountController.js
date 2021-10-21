@@ -131,8 +131,9 @@ module.exports = {
       // confirmando existencia do usuario
       if (userModel) {
         // criando conta digital
-        const accountCreatedResponse = await payment.createAccount(req.body);
-        console.log('pré cadastro ok, conta digital criada...')
+        // const accountCreatedResponse = await payment.createAccount(req.body);
+        // if (accountCreatedResponse.ok) { return "Conta foi criada" || console.log("conta criada") }
+        // console.log('pré cadastro ok, conta digital criada...')
 
         // atualizando collection User com dados enviados
         const userData = await User.findOneAndUpdate({ email }, { ...req.body })
@@ -140,7 +141,7 @@ module.exports = {
 
         // atualizando collection UserAccount no bd 
         // const accountData = await UserAccount.create({ userId: userModel._id }, { ...req.body })
-        const accountData = await UserAccount.create({ userId: userModel._id }, { ...req.body, junoResponse: accountCreatedResponse })
+        // const accountData = await UserAccount.create({ userId: userModel._id }, { ...req.body, junoResponse: accountCreatedResponse })
         console.log("accountData collection atualizado...!")
 
         return res.status(200).send({
