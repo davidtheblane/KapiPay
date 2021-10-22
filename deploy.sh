@@ -1,8 +1,8 @@
 #!/bin/bash
 
-git pull
-sudo npm ci
-sudo pm2 restart 0 --update-env
+git pull origin main
+sudo npm install
+sudo pm2 restart api-production
 
 # sudo pm2 stop 0
 # sudo npm install
