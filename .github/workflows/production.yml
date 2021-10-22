@@ -26,7 +26,7 @@ jobs:
          command: ls -la
          # command: cd KapiPay && sudo bash deploy.sh
          host: ${{ secrets.SSH_HOST_SERVER }}
-         username: deploy
+         username: root
          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
          
       #   local: my-repo
