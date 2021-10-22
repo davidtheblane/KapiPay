@@ -5,10 +5,12 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+    
+  workflow_dispatch:
       
 jobs:
   #CI:
-   # runs-on: ubuntu-latest
+   #runs-on: ubuntu-latest
     #steps:
      # - name: Deploy
       #  uses: actions/setup-node@v2
@@ -17,10 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      #  //// GARYGROSSGARTEN
-     - name: Run SSH command
+     - uses: actions/checkout@v2
+     - name: Deploy to Digital Ocean
        uses: garygrossgarten/github-action-ssh@release
        with:
-         command: ls -la
+         command: bash KapiPay/deploy.sh
          host: ${{ secrets.SSH_HOST_SERVER }}
          username: deploy
          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
