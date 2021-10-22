@@ -1,9 +1,9 @@
 #!/bin/bash
 
 git pull
-sudo pm2 stop 0
-sudo npm install
-sudo pm2 start 0
+sudo npm ci
+sudo pm2 restart 0 --update-env
 
-# npm ci
-# pm2 restart 0 --update-env
+# sudo pm2 stop 0
+# sudo npm install
+# sudo pm2 start 0
