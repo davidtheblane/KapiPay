@@ -23,15 +23,10 @@ jobs:
      - name: Deploy to Digital Ocean
        uses: garygrossgarten/github-action-ssh@release
        with:
-         # command: bash KapiPay/deploy.sh
+         command: bash deploy.sh
          host: ${{ secrets.SSH_HOST_SERVER }}
          username: deploy
          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-         command: cd KapiPay
-                  git pull
-                  sudo pm2 stop 0
-                  sudo npm install
-                  sudo pm2 start 0
          
       #   local: my-repo
       #   remote: ~/home/deploy
