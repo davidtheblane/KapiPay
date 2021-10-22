@@ -74,7 +74,6 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         }
       });
-
       return res.data;
     } catch (err) {
       throw err.response.data;
