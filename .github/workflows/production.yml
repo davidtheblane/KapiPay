@@ -23,10 +23,11 @@ jobs:
      - name: Deploy to Digital Ocean
        uses: garygrossgarten/github-action-ssh@release
        with:
-         command: ls -la
-         # command: cd KapiPay && sudo bash deploy.sh
+         # command: ls -la
+         command: cd KapiPay && sudo bash deploy.sh
          host: ${{ secrets.SSH_HOST_SERVER }}
-         username: root
+         username: deploy
+         password: ${{ secrets.SSH_USER_PASSWORD }}
          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
          
       #   local: my-repo
