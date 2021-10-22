@@ -24,7 +24,7 @@ jobs:
        uses: garygrossgarten/github-action-ssh@release
        with:
          # command: ls -la
-         command: cd KapiPay && sudo bash deploy.sh
+         command: cd KapiPay && bash deploy.sh
          host: ${{ secrets.SSH_HOST_SERVER }}
          username: deploy
          password: ${{ secrets.SSH_USER_PASSWORD }}
