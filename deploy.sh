@@ -1,6 +1,5 @@
 #!/bin/bash
 
-cd KapiPay
 git pull
 sudo pm2 stop 0
 sudo npm install
