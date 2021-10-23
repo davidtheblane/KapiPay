@@ -2,6 +2,7 @@ const payment = require('../resources/lib/payment/juno');
 const sentryError = require('../resources/error-handler');
 const User = require('../models/user');
 const UserAccount = require('../models/userAccount');
+const Sentry = require("@sentry/node")
 
 module.exports = {
 
@@ -9,10 +10,9 @@ module.exports = {
   getUserBalance: async (req, res) => {
     try {
       const balance = await payment.balance(req.headers.resourcetoken);
-      return res.send(balance)
-    }
-    catch (err) {
-      await sentryError(err);
+      res.send(balance)
+    } catch (err) {
+      Sentry.captureException(err)
       res.status(err.code || err.status || 400).send({
         error: err.code,
         message: err
@@ -27,8 +27,8 @@ module.exports = {
     try {
       const status = await payment.accountStatus(req.headers.resourcetoken);
       return res.status(200).send(status)
-    } catch (err) {
 
+    } catch (err) {
       return res.status(err.status || 400).send({ message: err });
     }
   },
