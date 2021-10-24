@@ -135,7 +135,7 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         },
       });
-      return res.data;
+      return res.data._embedded.charges[0];
     } catch (err) {
       throw err.response.data;
     }

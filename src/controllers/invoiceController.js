@@ -2,6 +2,7 @@ const payment = require('../resources/lib/payment/juno');
 // const invoicePay = require('../resources/lib/payment/invoice')
 const Company = require('../models/company');
 const Invoice = require('../models/invoice')
+const AccountController = require('../controllers/accountController')
 
 
 
@@ -35,18 +36,77 @@ module.exports = {
     const { charge } = req.body
 
     try {
-      // const invoiceCreate = await payment.charge(req.body, req.headers.resourcetoken);
+      const createNewInvoice = await payment.charge(req.body, req.headers.resourcetoken);
 
-      const storeInvoice = await Invoice.create({ charge }, { ...req.body })
-      // const storeInvoice = await Invoice.findOneAndUpdate({ charge }, { ...req.body, junoResponse: invoiceCreate })
-
+      // const storeInvoice = await Invoice.create(req.body.charge)
+      console.log(req.body.charge)
+      const storeNewInvoice = await Invoice.findOneAndUpdate(req.body.charge, { ...req.body, junoResponse: invoiceCreate })
 
       // console.log(`Criando Fatura: ${JSON.stringify(invoiceCreate._embedded)}`)
       // console.log(`Armazenando Fatura: ${(storeInvoice)}`)
 
+      res.status(200).send({ storeInvoice, invoiceCreate })
 
+    } catch (err) {
+      return res.status(err.status || 400).send({ message: err.stack || console.log(err.stack) });
+    }
+  },
 
-      return res.status(200).send(storeInvoice)
+  // //INVOICE INSERTION
+  // invoiceInsert: async (req, res) => {
+  //   const { charge } = req.body
+
+  //   try {
+  //     const createNewInvoice = await payment.charge(req.body, req.headers.resourcetoken);
+
+  //     // const storeInvoice = await Invoice.create(req.body.charge)
+  //     console.log(req.body.charge)
+  //     const storeNewInvoice = await Invoice.findOneAndUpdate(req.body.charge, { ...req.body, junoResponse: invoiceCreate })
+
+  //     // console.log(`Criando Fatura: ${JSON.stringify(invoiceCreate._embedded)}`)
+  //     // console.log(`Armazenando Fatura: ${(storeInvoice)}`)
+
+  //     res.status(200).send({ storeInvoice, invoiceCreate })
+
+  //   } catch (err) {
+  //     return res.status(err.status || 400).send({ message: err.stack || console.log(err.stack) });
+  //   }
+  // },
+
+  //CREATE INVOICE
+  createInvoice: async (req, res) => {
+    // const header = req.headers.resourcetoken
+    const formData = req.body;
+
+    try {
+      //1 pegar dados do formulario
+      //2 chamar função create Charge
+      const charge = await AccountController.createCharge(req.body, req.headers.resourcetoken)
+      //3 pegar resposta da create Charge
+
+      const storeInvoice = await findOneAndUpdate(req.body.charge, { ...req.body, junoResponse: charge })
+
+      //4 salvar dados do form e resposta da juno no bd
+      res.send(charge)
+    } catch (err) {
+      res.send(err)
+    }
+  },
+
+  invoiceInsert: async (req, res) => {
+    const { charge } = req.body
+
+    try {
+      const createNewInvoice = await payment.charge(req.body, req.headers.resourcetoken);
+
+      // const storeInvoice = await Invoice.create(req.body.charge)
+      console.log(req.body.charge)
+      const storeNewInvoice = await Invoice.findOneAndUpdate(req.body.charge, { ...req.body, junoResponse: invoiceCreate })
+
+      // console.log(`Criando Fatura: ${JSON.stringify(invoiceCreate._embedded)}`)
+      // console.log(`Armazenando Fatura: ${(storeInvoice)}`)
+
+      res.status(200).send({ storeInvoice, invoiceCreate })
 
     } catch (err) {
       return res.status(err.status || 400).send({ message: err.stack || console.log(err.stack) });
