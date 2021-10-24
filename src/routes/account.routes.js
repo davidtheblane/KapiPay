@@ -24,7 +24,7 @@ router.post('/payment_card', accountController.cardPayment)
 router.post('/save_card', accountController.saveCard)
 
 router.get('/invoices', invoiceController.invoices)
-router.post('/invoice_insert', invoiceController.invoiceInsert)
+router.post('/invoice_insert', invoiceController.createInvoice)
 
 
 // router.post('/payment_pix', authMiddleware, accountController.pixPayment)

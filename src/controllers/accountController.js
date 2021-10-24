@@ -61,9 +61,13 @@ module.exports = {
 
   //SEND CHARGE
   createCharge: async (req, res) => {
+    const data = ({ body } = req)
+    const resourcetoken = "BFBE2F8263AAD912E3159026ECAC481BEA90165A2C77EA2E35E111AC09B2F32A"
+    // const token = ({ resourcetoken } = req.headers)
+
     try {
-      const charge = await payment.charge(req.body, req.headers.resourcetoken);
-      res.status(200).send(charge)
+      const charge = await payment.charge(data, req.headers.resourcetoken);
+      return res.status(200).send(charge)
 
     } catch (err) {
       return res.status(err.status || 400).send({ message: err });

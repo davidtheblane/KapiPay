@@ -28,6 +28,10 @@ const InvoiceSchema = new mongoose.Schema({
     require: true,
   },
 
+  junoResponse: {
+    type: Object,
+  }
+
 });
 
 const Invoice = mongoose.model("Invoice", InvoiceSchema);
