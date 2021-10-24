@@ -66,7 +66,7 @@ module.exports = {
     // const token = ({ resourcetoken } = req.headers)
 
     try {
-      const charge = await payment.charge(data, req.headers.resourcetoken);
+      const charge = await payment.charge(data, resourcetoken);
       return res.status(200).send(charge)
 
     } catch (err) {

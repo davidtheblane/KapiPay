@@ -1,6 +1,11 @@
 const mongoose = require('../database');
 
 const InvoiceSchema = new mongoose.Schema({
+  //ID do usuário
+  userAccountId: {
+    type: mongoose.ObjectId,
+    ref: `UserAccount`
+  },
   amount: {
     type: Number,
     require: true,

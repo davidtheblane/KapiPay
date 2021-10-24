@@ -3,6 +3,7 @@ const payment = require('../resources/lib/payment/juno');
 const Company = require('../models/company');
 const Invoice = require('../models/invoice')
 const AccountController = require('../controllers/accountController')
+const UserAccount = require('../models/userAccount')
 
 
 
@@ -75,19 +76,27 @@ module.exports = {
 
   //CREATE INVOICE
   createInvoice: async (req, res) => {
-    // const header = req.headers.resourcetoken
-    const formData = req.body;
-
     try {
-      //1 pegar dados do formulario
-      //2 chamar função create Charge
-      const charge = await AccountController.createCharge(req.body, req.headers.resourcetoken)
-      //3 pegar resposta da create Charge
+      //identificar o usuario
+      const { userAccountId } = req.body
+      const userModel = await UserAccount.findOne({ userAccountId })
+      if (userModel) {
+        //1 pegar dados do formulario
+        // const header = req.headers.resourcetoken
+        const formData = req.body;
 
-      const storeInvoice = await findOneAndUpdate(req.body.charge, { ...req.body, junoResponse: charge })
+        //2 chamar a função create Charge
+        //3 pegar resposta da create Charge
+        const charge_res = await AccountController.createCharge(req.body, req.headers.resourcetoken)
 
-      //4 salvar dados do form e resposta da juno no bd
-      res.send(charge)
+
+        //4 salvar dados do form e resposta da juno no bd
+        const storeInvoice = await Invoice.create(formData, { junoResponse: charge_res })
+        // const storeInvoice = await Invoice.create({ userAccountId: userModel._id }, { ...req.body, junoResponse: accountCreatedResponse })
+
+        res.status(200).send(storeInvoice)
+
+      }
     } catch (err) {
       res.send(err)
     }
