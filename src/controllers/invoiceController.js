@@ -1,7 +1,7 @@
 const payment = require('../resources/lib/payment/juno');
 // const invoicePay = require('../resources/lib/payment/invoice')
 const Company = require('../models/company');
-const Invoice = require('../models/invoice')
+const Invoice = require('../models/userInvoice')
 const AccountController = require('../controllers/accountController')
 const UserAccount = require('../models/userAccount')
 
@@ -78,25 +78,26 @@ module.exports = {
   createInvoice: async (req, res) => {
     try {
       //identificar o usuario
-      const { userAccountId } = req.body
-      const userModel = await UserAccount.findOne({ userAccountId })
-      if (userModel) {
-        //1 pegar dados do formulario
-        // const header = req.headers.resourcetoken
-        const formData = req.body;
+      const { email } = req.body.billing
+      console.log(email)
+      // const userModel = await UserAccount.findOne({ userAccountId })
+      // if (userModel) {
+      //   //1 pegar dados do formulario
+      //   // const header = req.headers.resourcetoken
+      //   const formData = req.body;
 
-        //2 chamar a função create Charge
-        //3 pegar resposta da create Charge
-        const charge_res = await AccountController.createCharge(req.body, req.headers.resourcetoken)
+      //   //2 chamar a função create Charge
+      //   //3 pegar resposta da create Charge
+      //   const charge_res = await AccountController.createCharge(req.body, req.headers.resourcetoken)
 
 
-        //4 salvar dados do form e resposta da juno no bd
-        const storeInvoice = await Invoice.create(formData, { junoResponse: charge_res })
-        // const storeInvoice = await Invoice.create({ userAccountId: userModel._id }, { ...req.body, junoResponse: accountCreatedResponse })
+      //   //4 salvar dados do form e resposta da juno no bd
+      //   const storeInvoice = await Invoice.create(formData, { junoResponse: charge_res })
+      //   // const storeInvoice = await Invoice.create({ userAccountId: userModel._id }, { ...req.body, junoResponse: accountCreatedResponse })
 
-        res.status(200).send(storeInvoice)
+      //   res.status(200).send(storeInvoice)
 
-      }
+      // }
     } catch (err) {
       res.send(err)
     }
