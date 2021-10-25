@@ -28,14 +28,6 @@ const UserAccountSchema = new mongoose.Schema({
     // required: true,
   },
 
-  /*"monthlyIncomeOrRevenue": 0,
-    Renda mensal ou receita. Obrigatório para PF e PJ.
-  */
-  monthlyIncomeOrRevenue: {
-    type: Number,
-    // required: true,
-  },
-
   /*"bankAccount": {"bankNumber", "agencyNumber", "accountNumber", "accountComplementNumber", "accountType",
     "accountHolder": {"name", "document"} }
   */
@@ -45,7 +37,7 @@ const UserAccountSchema = new mongoose.Schema({
   },
 
   /* Resposta da criação de conta da JUNO */
-  junoResponse: {
+  junoAccountCreateResponse: {
     type: Object
   },
 
