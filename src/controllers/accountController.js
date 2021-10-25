@@ -2,6 +2,7 @@ const payment = require('../resources/lib/payment/juno');
 const sentryError = require('../resources/error-handler');
 const User = require('../models/user');
 const UserAccount = require('../models/userAccount');
+const UserInvoice = require('../models/userInvoice')
 const Sentry = require("@sentry/node")
 
 module.exports = {
@@ -58,21 +59,43 @@ module.exports = {
     }
   },
 
+  // //SEND CHARGE
+  // createCharge: async (req, res) => {
+  //   try {
+  //     const charge = await payment.charge(req.body, req.headers.resourcetoken);
+  //     res.status(200).send(charge)
 
-  //SEND CHARGE
+  //   } catch (err) {
+  //     return res.status(400).send({ message: err.message });
+  //   }
+  // },
+
+  //NEW IMPLEMENT
+  // //SEND CHARGE
   createCharge: async (req, res) => {
-    const data = ({ body } = req)
-    const resourcetoken = "BFBE2F8263AAD912E3159026ECAC481BEA90165A2C77EA2E35E111AC09B2F32A"
-    // const token = ({ resourcetoken } = req.headers)
-
     try {
-      const charge = await payment.charge(data, resourcetoken);
-      return res.status(200).send(charge)
+      const { email } = req.body.billing;
+      const userModel = await User.findOne({ email })
+
+      if (userModel) {
+        const response = await payment.charge(req.body, req.headers.resourcetoken);
+
+        if (UserInvoice.find({ userAccountId: userModel._id })) {
+          const invoice = await UserInvoice.create({ invoiceInfo: response, userAccountId: userModel._id })
+
+          res.status(200).send(invoice)
+        }
+      } else {
+        return res.status(400).send({ err: "Usuário não tem registro." });
+      }
 
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err });
+      return res.status(400).send({ message: err.message });
     }
   },
+
+
+
 
 
   //CARD PAYMENT (INSERT CREDITS)
@@ -99,36 +122,7 @@ module.exports = {
     }
   },
 
-  ////CREATE DIGITAL ACCOUNT
-  // createAccount: async (req, res) => {
-  //   const { email } = req.body;
 
-
-  //   try {
-  //     if (await User.findOne({ email })) {
-  //       // criação de conta digital
-  //       const accountCreatedResponse = await payment.createAccount(req.body);
-
-  //       // criação de conta no bd, somente se sucesso
-  //       // fazer uma validação aqui para evitar duplicidade
-  //       const userDigitalAccount = await User.updateOne({ email }, { ...req.body, junoResponse: accountCreatedResponse })
-
-  //       return res.status(200).send({
-  //         accountCreatedResponse,
-  //         userDigitalAccount
-  //       })
-  //     }
-  //     return res.status(400).send({ error: "User does not exist" });
-
-  //   } catch (err) {
-  //     return res.status(err.status || 400).send({ message: err });
-
-  //   }
-  // },
-
-  ///////////
-
-  //TESTE NEW IMPLEMENTATION
   //CREATE DIGITAL ACCOUNT
   createAccount: async (req, res) => {
 
@@ -140,7 +134,7 @@ module.exports = {
       // confirmando existencia do usuario pelo email
       if (userModel) {
         // chamando função de criação de conta digital
-        const junoAccountCreateResponse = await payment.createAccount(req.body);
+        const response = await payment.createAccount(req.body);
 
         // encontrando usuario pelo email e atualizando
         const userData = await User.findOneAndUpdate({ email }, { ...req.body })
@@ -148,7 +142,7 @@ module.exports = {
         // filtrando se o usuario existe pelo campo id das users models 
         if (UserAccount.find({ userId: userModel._id })) {
           //criando a document no bd, enviando dados inserios e reposta da juno
-          const accountData = await UserAccount.create({ ...req.body, junoAccountCreateResponse: junoAccountCreateResponse })
+          const accountData = await UserAccount.create({ ...req.body, userId: userModel._id, junoAccountCreateResponse: response })
 
           return res.status(200).send({
             userData,
@@ -158,7 +152,7 @@ module.exports = {
           return res.status(400).send({ err: "Usuário não encontrado, id não bate" })
         }
       } else {
-        return res.status(400).send({ err: "Usuário não tem registro, favor criar um" });
+        return res.status(400).send({ err: "Usuário não tem registro." });
       }
 
     } catch (err) {
