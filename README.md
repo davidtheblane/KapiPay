@@ -2,6 +2,8 @@
 
 # KapiPay
 
+![develop deploy status](https://github.com/davidtheblane/KapiPay/actions/workflows/develop_deploy.yml/badge.svg)
+
 #### Automatic bill payment system
 
 <hr>

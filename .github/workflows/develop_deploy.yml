@@ -1,0 +1,33 @@
+## This workflow updates the api development environment of kapipay, with a second database for tests.
+
+name: CI/CD DEVELOP
+
+on:
+  push:
+    branches: [develop]
+      
+jobs:
+  CI:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Branch        
+        uses: actions/checkout@v2 
+      
+  CD:
+    needs: [CI]
+    runs-on: self-hosted
+    
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"  
+      
+      - name: Update branch
+        run: git pull  
+      
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Restart Server
+        run: NODE_ENV=development pm2 restart 0 --update-env
