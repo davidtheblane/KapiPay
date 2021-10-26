@@ -103,24 +103,24 @@ module.exports = {
   cardPayment: async (req, res) => {
     try {
       const { email } = req.body.billing;
-      const { chargeId } = req.body;
-      const invoiceCharge = await UserInvoice.find({})
       const userModel = await User.findOne({ email })
+      const { chargeId } = req.body;
+      const userInvoice = await UserInvoice.findOne({ "invoiceInfo.id": chargeId }) //invoice do usuario
+      const invoiceChargeId = userInvoice.invoiceInfo.id //identificador de cobrança
+
 
       if (userModel) {
-        console.log(chargeId)
-        console.log(invoiceCharge)
-        // const response = await payment.cardPayment(req.body, req.headers.resourcetoken)
+        if (invoiceChargeId) {
+          const response = await payment.cardPayment(req.body, req.headers.resourcetoken)
+          const paid = await UserInvoice.findOneAndUpdate({ "invoiceInfo.id": chargeId }, { paymentInfo: response });
 
-        // if (chargeId == invoiceModel) {
-        //   const paid = await UserInvoice.create({ paymentInfo: response });
-        //   // const paid = await UserInvoice.({ paymentInfo: response });
-
-        //   return res.status(200).send(paid)
-        // }
+          return res.status(200).send(paid)
+        } else {
+          return res.status(400).send('Cobrança não existe')
+        }
 
       } else {
-        return res.send('user doesnt exists')
+        return res.status(400).send('User doesnt exists')
       }
 
     } catch (err) {
