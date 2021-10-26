@@ -44,7 +44,7 @@ const payment = {
 
       return res.data.access_token;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -67,7 +67,6 @@ const payment = {
 
   //----> GET BALANCE
   balance: async (resourcetoken) => {
-
     try {
       const instance = await payment.init();
       const res = await instance.get("balance", {
@@ -75,10 +74,9 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         }
       });
-
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -94,7 +92,7 @@ const payment = {
 
       return res.data
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -109,7 +107,7 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -124,7 +122,7 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -137,9 +135,9 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         },
       });
-      return res.data;
+      return res.data._embedded.charges[0];
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -152,9 +150,11 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         },
       });
-      return res.data;
+      console.log(res.data.payments[0])
+      return res.data.payments[0];
+
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -169,21 +169,26 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
 
   //----> CREATE DIGITAL ACCOUNT - utiliza JSON no corpo
   createAccount: async (body) => {
-    const instance = await payment.init();
-    const res = await instance.post("digital-accounts", body, {
-      headers: {
-        "X-Resource-Token": config.mainResourceToken,
-      },
-    });
-    console.log(res.data);
-    return res.data;
+    try {
+      const instance = await payment.init();
+      const res = await instance.post("digital-accounts", body, {
+        headers: {
+          "X-Resource-Token": config.mainResourceToken,
+        },
+      });
+      console.log(res.data);
+      return res.data;
+    } catch (err) {
+      throw err.response.data;
+    }
+
   },
 
 
@@ -198,7 +203,7 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
@@ -226,7 +231,7 @@ const payment = {
         });
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data;
     }
   },
 
