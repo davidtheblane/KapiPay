@@ -3,7 +3,8 @@ const sentryError = require('../resources/error-handler');
 const User = require('../models/user');
 const UserAccount = require('../models/userAccount');
 const UserInvoice = require('../models/userInvoice')
-const Sentry = require("@sentry/node")
+const Sentry = require("@sentry/node");
+const { _browserPerformanceTimeOriginMode } = require('@sentry/utils');
 
 module.exports = {
 
@@ -16,7 +17,7 @@ module.exports = {
       Sentry.captureException(err)
       res.status(err.code || err.status || 400).send({
         error: err.code,
-        message: err
+        message: err.message
       });
     } finally {
       req.transaction.finish();
@@ -30,7 +31,7 @@ module.exports = {
       return res.status(200).send(status)
 
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err });
+      return res.status(err.status || 400).send({ message: err.message });
     }
   },
 
@@ -42,7 +43,7 @@ module.exports = {
       return res.status(200).send(charges)
 
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err });
+      return res.status(err.status || 400).send({ message: err.message });
     }
   },
 
@@ -55,7 +56,7 @@ module.exports = {
       return res.status(200).send(charge)
 
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err });
+      return res.status(err.status || 400).send({ message: err.message });
     }
   },
 
@@ -101,13 +102,34 @@ module.exports = {
   //CARD PAYMENT (INSERT CREDITS)
   cardPayment: async (req, res) => {
     try {
-      const card_payment = await payment.cardPayment(req.body, req.headers.resourcetoken)
-      return res.status(200).send(card_payment)
+      const { email } = req.body.billing;
+      const { chargeId } = req.body;
+      const invoiceCharge = await UserInvoice.find({})
+      const userModel = await User.findOne({ email })
+
+      if (userModel) {
+        console.log(chargeId)
+        console.log(invoiceCharge)
+        // const response = await payment.cardPayment(req.body, req.headers.resourcetoken)
+
+        // if (chargeId == invoiceModel) {
+        //   const paid = await UserInvoice.create({ paymentInfo: response });
+        //   // const paid = await UserInvoice.({ paymentInfo: response });
+
+        //   return res.status(200).send(paid)
+        // }
+
+      } else {
+        return res.send('user doesnt exists')
+      }
 
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err });
+      return res.status(err.status || 400).send({ message: err.message });
     }
   },
+
+
+
 
   //SALVAR CARTÃO - (TOKENIZAR)
   saveCard: async (req, res) => {
@@ -118,7 +140,7 @@ module.exports = {
       return res.status(200).send(card_token)
 
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err });
+      return res.status(err.status || 400).send({ message: err.message });
     }
   },
 
@@ -156,7 +178,7 @@ module.exports = {
       }
 
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err });
+      return res.status(err.status || 400).send({ message: err.message });
     }
 
   },
@@ -169,7 +191,7 @@ module.exports = {
       return res.status(200).send(pend_docs)
 
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err });
+      return res.status(err.status || 400).send({ message: err.message });
     }
   },
 
@@ -182,7 +204,7 @@ module.exports = {
       return res.status(200).send(send_docs)
 
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err });
+      return res.status(err.status || 400).send({ message: err.message });
     }
   },
 
@@ -208,7 +230,7 @@ module.exports = {
       console.log(pix_payment)
     } catch (err) {
       console.log(err.message || err.stack)
-      return res.status(err.status || 400).send({ message: err });
+      return res.status(err.status || 400).send({ message: err.message });
     }
   }
 
