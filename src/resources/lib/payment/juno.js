@@ -150,7 +150,9 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         },
       });
-      return res.data;
+      console.log(res.data.payments[0])
+      return res.data.payments[0];
+
     } catch (err) {
       throw err.response.data;
     }
