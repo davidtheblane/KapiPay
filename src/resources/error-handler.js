@@ -1,11 +1,13 @@
 const Sentry = require("@sentry/node")
 
-const sentryError = async (error) => {
-  try {
-    Sentry.captureException(error);
-  } catch (err) {
-    throw err;
-  }
-};
+Sentry.init({ dsn: process.env.SENTY_DSN, tracesSamples: 1.0 });
 
-module.exports = sentryError;
+async function errorHandler(error) {
+  try {
+    Sentry.captureException(error)
+  } catch (err) {
+    throw err
+  }
+}
+
+module.exports = errorHandler
