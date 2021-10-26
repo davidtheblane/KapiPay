@@ -1,5 +1,5 @@
-
 # KapiPay
+
 ![develop deploy status](https://github.com/davidtheblane/KapiPay/actions/workflows/develop_deploy.yml/badge.svg)
 
 #### Automatic bill payment system
@@ -11,10 +11,8 @@
 **TO-DO**
 
 ```
-Dividir o model de users, em user e userAccount
 
 TRANSFER - PAYMENT
-CARD PAYMENT
 CREDIT CARD TOKENIZATION
 ```
 
@@ -23,9 +21,11 @@ CREDIT CARD TOKENIZATION
 **DONE**
 
 ```
+OK > Dividir o model de users, em user e userAccount
 OK > mergear o model de users e popular
 OK > Como passar o x-resource-token do usuario logado.
 
+OK > CARD PAYMENT
 OK > LIST CHARGES - verified
 OK > VIEW CHARGE BY CHARGE ID - verified
 OK > SEND CHARGE - verified
