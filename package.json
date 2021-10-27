@@ -31,7 +31,8 @@
     "nodemailer": "^6.6.3",
     "nodemailer-express-handlebars": "^4.0.0",
     "path": "^0.12.7",
-    "soap": "^0.42.0"
+    "soap": "^0.42.0",
+    "xml-to-json-stream": "^1.1.0"
   },
   "devDependencies": {
     "dotenv": "^10.0.0",
