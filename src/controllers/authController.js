@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const User = require("../models/user");
+const UserAccount = require('../models/userAccount');
 const sgMail = require('@sendgrid/mail')
 require('dotenv').config()
 
@@ -28,7 +29,7 @@ module.exports = {
     try {
       //verifica se já tem algum user com o mesmo email
       if (await User.findOne({ email })) {
-        return res.status(400).send({ error: "User already exists" });
+        return res.status(400).send({ message: "Usuário já existe." });
       } else {
         const user = await User.create(req.body);
         //esconde o password
@@ -39,7 +40,7 @@ module.exports = {
         });
       }
     } catch (err) {
-      return res.status(400).send({ error: "Registration failed" });
+      return res.status(400).send({ err: "Falha no registro." });
     }
   },
 
@@ -47,25 +48,29 @@ module.exports = {
 
   //Login Usuário
   authUser: async (req, res) => {
-    const { email, password } = req.body;
-
     try {
+      const { email, password } = req.body;
+
       //encontrar usuario por email e password
       const user = await User.findOne({ email }).select('+password');
-
       if (!user)
-        return res.status(400).send({ error: "User not found" });
+        return res.status(400).send({ message: "Usuário não encontrado." });
       if (!await bcrypt.compare(password, user.password))
-        return res.status(400).send({ error: "Invalid password" });
+        return res.status(400).send({ message: "Senha inválida" });
+
+      //encontrar userAccount por id
+      const account = await UserAccount.findOne({ "userId": user._id });
+      const resourcetoken = account.junoAccountCreateResponse.resourceToken
 
       //esconde o password
       user.password = undefined
       res.send({
         user,
         token: generateToken({ id: user.id }),
+        resourcetoken
       })
-    } catch (e) {
-      console.log(e.message || e.stack)
+    } catch (err) {
+      return console.log(err.message || err.stack)
     }
   },
 
@@ -77,7 +82,7 @@ module.exports = {
     try {
       const user = await User.findOne({ email });
       if (!user)
-        return res.status(400).send({ error: "user not found" });
+        return res.status(400).send({ message: "Usuário não encontrado." });
       //gera token pra recuperar senha
       const token = crypto.randomBytes(20).toString('hex');
       //tempo de expiração do token
@@ -106,13 +111,13 @@ module.exports = {
 
       }, (err) => {
         if (err)
-          return res.status(400).send({ error: "Cannot send forgot password email", token });
+          return res.status(400).send({ err: "Não é possível enviar o email", token });
 
         return res.send(token)
       })
 
     } catch (err) {
-      res.status(400).send({ error: "Error on forgot password, try again" })
+      res.status(400).send({ err: "Erro, tente novamente" })
     }
   },
 
@@ -127,26 +132,26 @@ module.exports = {
         .select('+passwordResetToken passwordResetExpires');
 
       if (!user)
-        return res.status(400).send({ error: "user not found" });
+        return res.status(400).send({ message: "Usuário não encontrado." });
 
       if (token !== user.passwordResetToken)
-        return res.status(400).send({ error: "Invalid token" });
+        return res.status(400).send({ message: "Token Inválido." });
 
       const now = new Date();
 
       if (now > user.passwordResetExpires)
-        return res.status(400).send({ error: "Token expired, generate a new one" });
+        return res.status(400).send({ message: "Token expirou, gere um novo" });
 
       user.password = password;
 
       await user.save();
 
-      res.send('ok, senha alterada')
+      res.status(200).send({ message: 'Senha alterada com sucesso' })
 
 
 
     } catch (err) {
-      res.status(400).send({ error: "Cannot reset password, try again" });
+      res.status(400).send({ err: "Não foi possível resetar a senha, tente novamente." });
     }
   },
 
