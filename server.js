@@ -1,11 +1,12 @@
 const express = require("express");
-const morgan = require('morgan')
-const cors = require('cors');
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
+const morgan = require('morgan')
+const cors = require('cors');
 const multer = require('multer')
 
-Sentry.init({ dsn: process.env.SENTY_DSN, tracesSamples: 1.0 });
+
+
 
 require('dotenv').config({
   path: process.env.NODE_ENV === "development" ? ".env.development" : ".env"
@@ -13,6 +14,10 @@ require('dotenv').config({
 
 const upload = multer()
 const app = express();
+Sentry.init({ dsn: process.env.SENTY_DSN, tracesSamples: 1.0 });
+
+// The request handler must be the first middleware on the app
+app.use(Sentry.Handlers.requestHandler());
 
 app.use(upload.any());
 app.use(express.static('public'));
@@ -26,6 +31,11 @@ app.use(express.urlencoded({ extended: false }));
 //ROUTES
 app.use('/', require('./src/routes/users.routes'))
 app.use('/account', require('./src/routes/account.routes'))
+
+
+
+// The error handler must be before any other error middleware and after all controllers
+app.use(Sentry.Handlers.errorHandler());
 
 
 
