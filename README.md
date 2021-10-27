@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # KapiPay
 
 ![develop deploy status](https://github.com/davidtheblane/KapiPay/actions/workflows/develop_deploy.yml/badge.svg)
@@ -35,3 +36,10 @@ OK > SEND DOCUMENTS - verified
 OK > GET BALANCE - verified
 OK > STATUS ACCOUNT - verified
 ```
+=======
+![production deploy status](https://github.com/davidtheblane/KapiPay/actions/workflows/production_deploy.yml/badge.svg)
+
+# KapiPay
+
+#### Automatic bill payment system
+>>>>>>> main
