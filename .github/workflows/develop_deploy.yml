@@ -1,33 +1,29 @@
-## This workflow updates the api development environment of kapipay, with a second database for tests.
-
-name: CI/CD DEVELOP
+name: CI/CD Development
 
 on:
   push:
-    branches: [develop]
-      
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+  
 jobs:
   CI:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout Branch        
-        uses: actions/checkout@v2 
-      
+   runs-on: ubuntu-latest
+   steps:
+     - name: Development Deploy
+       uses: actions/setup-node@v2
   CD:
     needs: [CI]
-    runs-on: self-hosted
-    
+    runs-on: ubuntu-latest
     steps:
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: "14.x"  
-      
-      - name: Update branch
-        run: git pull  
-      
-      - name: Install dependencies
-        run: npm ci
-        
-      - name: Restart Server
-        run: NODE_ENV=development pm2 restart 0 --update-env
+     #  //// GARYGROSSGARTEN
+     - uses: actions/checkout@v2
+     - name: Development Deploy to Digital Ocean
+       uses: garygrossgarten/github-action-ssh@release
+       with:
+         # command: ls -la
+         command: cd /home/develop/KapiPay && bash ./deploy.sh
+         host: ${{ secrets.SSH_HOST_SERVER_DEVELOP }}
+         username: root
+        # password: ${{ secrets.SSH_USER_PASSWORD }}
+         privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
