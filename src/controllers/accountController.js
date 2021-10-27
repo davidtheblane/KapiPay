@@ -3,9 +3,6 @@ const sentryError = require('../resources/error-handler');
 const User = require('../models/user');
 const UserAccount = require('../models/userAccount');
 const UserInvoice = require('../models/userInvoice')
-const Sentry = require("@sentry/node");
-const { _browserPerformanceTimeOriginMode } = require('@sentry/utils');
-const errorHandler = require('../resources/error-handler')
 
 module.exports = {
 
@@ -15,7 +12,7 @@ module.exports = {
       const balance = await payment.balance(req.headers.resourcetoken);
       res.send(balance)
     } catch (err) {
-      errorHandler(err)
+      sentryError(err);
       res.status(err.code || err.status || 400).send({
         error: err.code,
         message: err.message
@@ -59,19 +56,8 @@ module.exports = {
     }
   },
 
-  // //SEND CHARGE
-  // createCharge: async (req, res) => {
-  //   try {
-  //     const charge = await payment.charge(req.body, req.headers.resourcetoken);
-  //     res.status(200).send(charge)
 
-  //   } catch (err) {
-  //     return res.status(400).send({ message: err.message });
-  //   }
-  // },
-
-  //NEW IMPLEMENT
-  // //SEND CHARGE
+  //SEND CHARGE
   createCharge: async (req, res) => {
     try {
       const { email } = req.body.billing;
@@ -86,16 +72,14 @@ module.exports = {
           res.status(200).send(invoice)
         }
       } else {
-        return res.status(400).send({ err: "Usuário não tem registro." });
+        return res.status(400).send({ message: "Usuário não tem registro." });
       }
 
     } catch (err) {
+      sentryError(err);
       return res.status(400).send({ message: err.message });
     }
   },
-
-
-
 
 
   //CARD PAYMENT (INSERT CREDITS)
@@ -115,19 +99,18 @@ module.exports = {
 
           return res.status(200).send(paid)
         } else {
-          return res.status(400).send('Cobrança não existe')
+          return res.status(400).send({ message: 'Cobrança não existe' })
         }
 
       } else {
-        return res.status(400).send('User doesnt exists')
+        return res.status(400).send({ message: 'Usuario não existe.' })
       }
 
     } catch (err) {
+      sentryError(err);
       return res.status(err.status || 400).send({ message: err.message });
     }
   },
-
-
 
 
   //SALVAR CARTÃO - (TOKENIZAR)
@@ -170,13 +153,14 @@ module.exports = {
             accountData
           })
         } else {
-          return res.status(400).send({ err: "Usuário não encontrado, id não bate" })
+          return res.status(400).send({ message: "Usuário não encontrado." })
         }
       } else {
-        return res.status(400).send({ err: "Usuário não tem registro." });
+        return res.status(400).send({ message: "Usuário não tem registro na aplicação." });
       }
 
     } catch (err) {
+      sentryError(err);
       return res.status(err.status || 400).send({ message: err.message });
     }
 
@@ -208,7 +192,7 @@ module.exports = {
   },
 
 
-  // //PAGAMENTO DE CONTAS
+  //PAGAMENTO DE CONTAS
   // billPayment: async (req, res) => {
   //   try {
   //     const body = req.body

@@ -1,18 +1,16 @@
 const cepService = require("../resources/lib/cep/cep.service")
-const url = `https://apphom.correios.com.br/SigepMasterJPA/AtendeClienteService/AtendeCliente?wsdl`;
-
-const service = new cepService(url)
-
+const errorHandler = require('../resources/error-handler')
 
 module.exports = {
 
   getCep: async (req, res) => {
+    const obj = req.params.id;
     try {
-      const connection = await service.connection();
-      const response = await service.request(connection, "consultaCEPAsync", { cep: `${req.params.id}` })
-      return res.status(200).send(response[0] || console.log(response[0]))
+      const response = await cepService.postCode(obj)
+      return res.status(200).send(response)
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err.stack });
+      errorHandler(err);
+      res.status(err.code || 400).send({ message: err.stack });
     }
 
   }
