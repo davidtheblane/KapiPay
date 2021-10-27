@@ -1,6 +1,6 @@
 .env
 .env.development
-
+README.md
 .vscode
 node_modules
 usersInfo.txtsendgrid.env

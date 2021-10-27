@@ -5,6 +5,7 @@ const UserAccount = require('../models/userAccount');
 const UserInvoice = require('../models/userInvoice')
 const Sentry = require("@sentry/node");
 const { _browserPerformanceTimeOriginMode } = require('@sentry/utils');
+const errorHandler = require('../resources/error-handler')
 
 module.exports = {
 
@@ -14,13 +15,11 @@ module.exports = {
       const balance = await payment.balance(req.headers.resourcetoken);
       res.send(balance)
     } catch (err) {
-      Sentry.captureException(err)
+      errorHandler(err)
       res.status(err.code || err.status || 400).send({
         error: err.code,
         message: err.message
       });
-    } finally {
-      req.transaction.finish();
     }
   },
 
