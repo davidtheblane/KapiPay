@@ -16,7 +16,7 @@ jobs:
     needs: [CI]
     runs-on: ubuntu-latest
     steps:
-     #  //// GARYGROSSGARTEN
+     #  ///// GARYGROSSGARTEN
      - uses: actions/checkout@v2
      - name: Deploy to Digital Ocean
        uses: garygrossgarten/github-action-ssh@release
