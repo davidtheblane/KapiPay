@@ -4,7 +4,6 @@ const User = require('../models/user');
 const UserAccount = require('../models/userAccount');
 const UserInvoice = require('../models/userInvoice')
 const Sentry = require("@sentry/node");
-const { _browserPerformanceTimeOriginMode } = require('@sentry/utils');
 const errorHandler = require('../resources/error-handler')
 
 module.exports = {
