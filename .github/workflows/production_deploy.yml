@@ -2,29 +2,27 @@ name: CI/CD Production
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
-  
+    branches: [main]
+
 jobs:
   CI:
-   runs-on: ubuntu-latest
-   steps:
-     - name: Deploy
-       uses: actions/setup-node@v2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Production Deploy
+        uses: actions/setup-node@v2
   CD:
     needs: [CI]
     runs-on: ubuntu-latest
     steps:
-     #  ////// GARYGROSSGARTEN
-     - uses: actions/checkout@v2
-     - name: Deploy to Digital Ocean
-       uses: garygrossgarten/github-action-ssh@release
-       with:
-         # command: ls -la
-         command: cd /home/deploy/KapiPay && bash ./deploy.sh
-         host: ${{ secrets.SSH_HOST_SERVER }}
-         username: root
-        # password: ${{ secrets.SSH_USER_PASSWORD }}
-         privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-         
+      #  ////// GARYGROSSGARTEN
+      - uses: actions/checkout@v2
+      - name: Production Deploy to Digital Ocean
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          # command: ls -la
+          command: cd /home/deploy/KapiPay/deploy && bash ./production.sh
+          host: ${{ secrets.SSH_HOST_SERVER }}
+          username: ${{ secrets.SSH_USERNAME }}
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}

@@ -2,28 +2,27 @@ name: CI/CD Development
 
 on:
   push:
-    branches: [ develop ]
+    branches: [develop]
   pull_request:
-    branches: [ develop ]
-  
+    branches: [develop]
+
 jobs:
   CI:
-   runs-on: ubuntu-latest
-   steps:
-     - name: Development Deploy
-       uses: actions/setup-node@v2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Development Deploy
+        uses: actions/setup-node@v2
   CD:
     needs: [CI]
     runs-on: ubuntu-latest
     steps:
-     #  //// GARYGROSSGARTEN
-     - uses: actions/checkout@v2
-     - name: Development Deploy to Digital Ocean
-       uses: garygrossgarten/github-action-ssh@release
-       with:
-         # command: ls -la
-         command: cd /home/develop/KapiPay && bash ./deploy.sh
-         host: ${{ secrets.SSH_HOST_SERVER_DEVELOP }}
-         username: root
-        # password: ${{ secrets.SSH_USER_PASSWORD }}
-         privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+      #  //// GARYGROSSGARTEN
+      - uses: actions/checkout@v2
+      - name: Development Deploy to Digital Ocean
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          # command: ls -la
+          command: cd /home/develop/KapiPay/deploy && bash ./develop.sh
+          host: ${{ secrets.SSH_HOST_SERVER_DEVELOP }}
+          username: ${{ secrets.SSH_USERNAME }}
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
