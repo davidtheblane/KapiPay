@@ -159,8 +159,6 @@ module.exports = {
 
     } catch (err) {
       sentryError(err);
-      // return res.status(err.status || 400).send({ message: err });
-      console.log(err)
       return res.status(err.code || err.status || 400).send(err.details);
     }
 
