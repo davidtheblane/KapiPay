@@ -26,7 +26,7 @@ router.post('/save_card', accountController.saveCard)
 
 
 
-router.get('/companies', companyController.getCompanies)
+router.get('/company', companyController.getCompany)
 router.post('/company', companyController.newCompany)
 
 // router.get('/invoices', invoiceController.invoices)
