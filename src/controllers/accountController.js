@@ -13,10 +13,9 @@ module.exports = {
       res.send(balance)
     } catch (err) {
       sentryError(err);
-      res.status(err.code || err.status || 400).send({
-        error: err.code,
-        message: err.message
-      });
+      // res.status(err.code || err.status || 400).send({ err: err.code, message: err.message });
+      res.status(err.code || err.status || 400).send(err);
+
     }
   },
 

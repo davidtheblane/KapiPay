@@ -9,7 +9,7 @@ const CompanyType = require('../models/companyType');
 module.exports = {
 
   // GET COMPANIES
-  getCompanies: async (req, res) => {
+  getCompany: async (req, res) => {
     try {
       const companies = await await Company.find({})
       res.status(200).send(companies)
@@ -19,31 +19,16 @@ module.exports = {
     }
   },
 
-  //  //SEND CHARGE
-  //  createCharge: async (req, res) => {
+  // // GET COMPANY By ID
+  // getCompanyById: async (req, res) => {
   //   try {
-  //     const { email } = req.body.billing;
-  //     const userModel = await User.findOne({ email })
-
-  //     if (userModel) {
-  //       const response = await payment.charge(req.body, req.headers.resourcetoken);
-
-  //       if (UserInvoice.find({ userAccountId: userModel._id })) {
-  //         const invoice = await UserInvoice.create({ invoiceInfo: response, userAccountId: userModel._id })
-
-  //         res.status(200).send(invoice)
-  //       }
-  //     } else {
-  //       return res.status(400).send({ message: "Usuário não tem registro." });
-  //     }
-
+  //     const companies = await await Company.find({})
+  //     res.status(200).send(companies)
   //   } catch (err) {
   //     sentryError(err);
-  //     return res.status(400).send({ message: err.message });
+  //     return res.status(400).send(err);
   //   }
   // },
-
-
 
 
   //INSERT COMPANY
