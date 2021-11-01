@@ -4,6 +4,7 @@ const Tracing = require("@sentry/tracing");
 const morgan = require('morgan')
 const cors = require('cors');
 const multer = require('multer')
+const sessions = require('./src/database/index');
 
 
 
@@ -29,8 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //ROUTES
-app.use('/', require('./src/routes/users.routes'))
-app.use('/account', require('./src/routes/account.routes'))
+app.use('/', require('./src/routes/users.routes'));
+app.use('/account', require('./src/routes/account.routes'));
 
 
 
