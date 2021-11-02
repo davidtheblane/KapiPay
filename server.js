@@ -4,10 +4,7 @@ const Tracing = require("@sentry/tracing");
 const morgan = require('morgan')
 const cors = require('cors');
 const multer = require('multer')
-const sessions = require('./src/database/index');
-
-
-
+// const sessions = require('./src/database/index');
 
 require('dotenv').config({
   path: process.env.NODE_ENV === "development" ? ".env.development" : ".env"
