@@ -5,6 +5,7 @@ const SECRET_KEY = process.env.AUTH_TOKEN_SECRET_KEY;
 
 module.exports = (req, res, next) => {
   const authHeader = req.headers.authorization;
+  console.log(authHeader)
 
   if (!authHeader)
     return res.status(400).send({ err: "Token não inserido, verifique o cabeçalho." });

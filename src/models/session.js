@@ -1,13 +1,13 @@
 const mongoose = require('../database');
 
-const UserSessionSchema = new mongoose.Schema({
+const MySessionSchema = new mongoose.Schema({
   //ID do usuário
-  token: {
-    type: String,
+  session: {
+    type: Object,
   },
 
 });
 
-const UserSession = mongoose.model("UserSession", UserSessionSchema);
+const MySession = mongoose.model("MySession", MySessionSchema);
 
-module.exports = UserSession;
+module.exports = MySession;
