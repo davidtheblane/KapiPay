@@ -68,17 +68,17 @@ module.exports = {
 
   //LIST CHARGES
   listCharges: async (req, res) => {
-    //FINDING COLLECTIONS 
-    const userSession = await MySession.find({})// puxando session do usuario 
-    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-    const loggedUserId = userModel._id //puxando id do usuario logado
-
-    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-    //ACTION
     try {
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.find({})// puxando session do usuario 
+      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+
+      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+      const loggedUserId = userModel._id //puxando id do usuario logado
+
+      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+      //ACTION
       const response = await payment.listCharges(resourcetoken);
       const chargeId = response.charges[0].id
 
@@ -305,10 +305,8 @@ module.exports = {
           //criando a document no bd, enviando dados inserios e reposta da juno
           const accountData = await UserAccount.create({ ...req.body, userId: userModel._id, junoAccountCreateResponse: response })
 
-          return res.status(200).send({
-            userData,
-            accountData
-          })
+          console.log({ userData, accountData })
+          return res.status(200).send({ message: "Conta criada com sucesso!", userData: userData, accountData: accountData })
         } else {
           return res.status(400).send({ message: "Usuário não encontrado." })
         }
@@ -318,6 +316,7 @@ module.exports = {
 
     } catch (err) {
       sentryError(err);
+      console.log(err)
       return res.status(err.code || err.status || 400).send(err.message);
     }
 
