@@ -13,7 +13,7 @@ router.get("/", function rootHandler(req, res) {
 
 router.get('/users', authMiddleware, userController.listUsers)
 router.get('/users/:id', authMiddleware, userController.getUser)
-router.get('/cep/:id', authMiddleware, cepController.getCep)
+router.get('/cep/:id', cepController.getCep)
 
 
 router.post('/register', authController.createUser)
