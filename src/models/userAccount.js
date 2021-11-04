@@ -28,6 +28,11 @@ const UserAccountSchema = new mongoose.Schema({
     // required: true,
   },
 
+  billing: {
+    type: Object,
+    // required: true,
+  },
+
   /*"bankAccount": {"bankNumber", "agencyNumber", "accountNumber", "accountComplementNumber", "accountType",
     "accountHolder": {"name", "document"} }
   */

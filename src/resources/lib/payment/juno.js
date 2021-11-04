@@ -105,7 +105,7 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         },
       });
-      return res.data;
+      return res.data._embedded;
     } catch (err) {
       throw err.response.data;
     }
@@ -131,6 +131,36 @@ const payment = {
     try {
       const instance = await payment.init();
       const res = await instance.post("charges", body, {
+        headers: {
+          "X-Resource-Token": resourcetoken,
+        },
+      });
+      return res.data._embedded.charges[0];
+    } catch (err) {
+      throw err.response.data;
+    }
+  },
+
+  //----> SEND TRANSFER - utiliza JSON no corpo
+  transfer: async (body, resourcetoken) => {
+    try {
+      const instance = await payment.init();
+      const res = await instance.post("transfers", body, {
+        headers: {
+          "X-Resource-Token": resourcetoken,
+        },
+      });
+      return res.data._embedded.charges[0];
+    } catch (err) {
+      throw err.response.data;
+    }
+  },
+
+  //----> BILL PAYMENTS - utiliza JSON no corpo
+  billPayment: async (body, resourcetoken) => {
+    try {
+      const instance = await payment.init();
+      const res = await instance.post("bill-payments", body, {
         headers: {
           "X-Resource-Token": resourcetoken,
         },

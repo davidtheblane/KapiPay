@@ -23,6 +23,11 @@ router.post('/charge', accountController.createCharge)
 router.post('/documents/:id', accountController.sendDocuments)
 router.post('/payment_card', accountController.cardPayment)
 router.post('/save_card', accountController.saveCard)
+router.post('/bank_account', accountController.bankAccount)
+router.post('/bill_payment', accountController.billPayment)
+
+
+
 
 
 

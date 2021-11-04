@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
-// require('dotenv').config()
+require('dotenv').config()
 
 
 
 const DATABASE_URL = process.env.DATABASE_URL;
 mongoose.connect(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-
-
 
 mongoose.Promise = global.Promise;
 module.exports = mongoose;
@@ -23,4 +21,4 @@ db.once('open', () => {
   } else {
     console.log('📦 Connected to the database')
   }
-})
+});
