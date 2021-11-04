@@ -1,9 +1,11 @@
 const express = require("express");
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
-const morgan = require('morgan')
+const morgan = require('morgan');
 const cors = require('cors');
-const multer = require('multer')
+const multer = require('multer');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocs = require('./src/resources/swagger/swagger.json')
 // const sessions = require('./src/database/index');
 
 require('dotenv').config({
@@ -29,6 +31,7 @@ app.use(express.urlencoded({ extended: false }));
 //ROUTES
 app.use('/', require('./src/routes/users.routes'));
 app.use('/account', require('./src/routes/account.routes'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 
 
