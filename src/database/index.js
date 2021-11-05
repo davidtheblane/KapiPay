@@ -1,15 +1,11 @@
 const mongoose = require('mongoose');
 require('dotenv').config()
 
-
-
 const DATABASE_URL = process.env.DATABASE_URL;
 mongoose.connect(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 mongoose.Promise = global.Promise;
 module.exports = mongoose;
-
-
 
 const NODE_ENV = process.env.NODE_ENV
 //verifica se e em qual banco de dados esta conectado
