@@ -6,7 +6,6 @@ const cors = require('cors');
 const multer = require('multer');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocs = require('./src/resources/swagger/swagger.json')
-// const sessions = require('./src/database/index');
 
 require('dotenv').config({
   path: process.env.NODE_ENV === "development" ? ".env.development" : ".env"
@@ -33,14 +32,8 @@ app.use('/', require('./src/routes/users.routes'));
 app.use('/account', require('./src/routes/account.routes'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
-
-
 // The error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());
-
-
-
-
 
 const PORT = process.env.API_PORT || 5050;
 app.listen(PORT, () => console.log(`👾 Server Running on port: ${PORT}`));

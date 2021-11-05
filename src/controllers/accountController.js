@@ -5,55 +5,116 @@ const UserAccount = require('../models/userAccount');
 const UserInvoice = require('../models/userInvoice');
 const MySession = require('../models/session');
 
+
 module.exports = {
 
   //GET BALANCE
   getUserBalance: async (req, res) => {
+    const authorization = req.headers.authorization.split(" ")
+    const token = authorization[1]
     try {
       //FINDING COLLECTIONS 
-      const userSession = await MySession.find({})// puxando session do usuario 
-      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+      const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
+      const userSessionToken = userSession.session.token //token do usuario logado
+      const userSessionEmail = userSession.session.userEmail //email do usuario logado
+      if (!(userSessionToken == token)) { //verificando de usuario pelo token
+        console.log('Usuario Não Identificado')
+      } else {
+        console.log('Usuario Identificado')
 
-      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-      const loggedUserId = userModel._id //puxando id do usuario logado
+        const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+        const loggedUserId = userModel._id //puxando id do usuario logado
 
-      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+        const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+        const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
 
-      //ACTION
-      const balance = await payment.balance(resourcetoken);
-      res.send(balance)
+        //ACTION
+        const balance = await payment.balance(resourcetoken);
+        res.send(balance)
+      }
     } catch (err) {
       sentryError(err);
       // res.status(err.code || err.status || 400).send({ err: err.code, message: err.message });
-      res.status(err.code || err.status || 400).send(err);
+      res.status(err.status || 400).send({ message: err.message });
 
     }
   },
 
   //STATUS ACCOUNT
   accountStatus: async (req, res) => {
-    //FINDING COLLECTIONS 
-    const userSession = await MySession.find({})// puxando session do usuario 
-    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-    const loggedUserId = userModel._id //puxando id do usuario logado
-
-    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-    //ACTION
+    const authorization = req.headers.authorization.split(" ")
+    const token = authorization[1]
     try {
-      const status = await payment.accountStatus(resourcetoken);
-      return res.status(200).send(status)
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
+      const userSessionToken = userSession.session.token //token do usuario logado
+      const userSessionEmail = userSession.session.userEmail //email do usuario logado
+      if (!(userSessionToken == token)) { //verificando de usuario pelo token
+        console.log('Usuario Não Identificado')
+      } else {
+        console.log('Usuario Identificado')
+
+        const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+        const loggedUserId = userModel._id //puxando id do usuario logado
+
+        const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+        const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+        //ACTION
+        const status = await payment.accountStatus(resourcetoken);
+        console.log(status)
+        return res.status(200).send(status)
+      }
 
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err.message });
+      sentryError(err);
+      console.log(err)
+      return res.status(err.status || 400).send({ message: "err.message" });
     }
   },
 
   //LIST CHARGES
   listCharges: async (req, res) => {
+    const authorization = req.headers.authorization.split(" ")
+    const token = authorization[1]
+    try {
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
+      const userSessionToken = userSession.session.token //token do usuario logado
+      const userSessionEmail = userSession.session.userEmail //email do usuario logado
+      if (!(userSessionToken == token)) { //verificando de usuario pelo token
+        console.log('Usuario Não Identificado')
+      } else {
+        console.log('Usuario Identificado')
+
+        const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+        const loggedUserId = userModel._id //puxando id do usuario logado
+
+        const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+        const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+        //ACTION
+        const response = await payment.listCharges(resourcetoken);
+        const chargeId = response.charges[0].id
+        console.log(response)
+        return res.status(200).send(response)
+      }
+      // ESTA DANDO ERRO DE SESSION NULL NO INSOMNIA, FAZER A CHAMADA PELO NAVEGADOR
+
+      // if (UserInvoice.find({ userAccountId: loggedUserId })) {
+      //   const charges = await UserInvoice.updateMany({ "invoiceInfo.id": chargeId, userAccountId: loggedUserId })
+      //   return res.status(200).send(response.charges[0])
+      // } else {
+      //   console.log('erro')
+      // }
+
+    } catch (err) {
+      console.log(err)
+      return res.status(err.status || 400).send(err);
+    }
+  },
+
+
+  //LIST CHARGE by Charge Id
+  chargeByChargeId: async (req, res) => {
     try {
       //FINDING COLLECTIONS 
       const userSession = await MySession.find({})// puxando session do usuario 
@@ -65,35 +126,6 @@ module.exports = {
       const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
       const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
       //ACTION
-      const response = await payment.listCharges(resourcetoken);
-      const chargeId = response.charges[0].id
-
-      if (UserInvoice.find({ userAccountId: loggedUserId })) {
-        const charges = await UserInvoice.updateMany({ "invoiceInfo.id": chargeId, userAccountId: loggedUserId })
-        return res.status(200).send(response.charges[0])
-      } else {
-        console.log('erro')
-      }
-
-    } catch (err) {
-      return res.status(err.status || 400).send({ message: err.message });
-    }
-  },
-
-
-  //LIST CHARGE by Charge Id
-  chargeByChargeId: async (req, res) => {
-    //FINDING COLLECTIONS 
-    const userSession = await MySession.find({})// puxando session do usuario 
-    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-    const loggedUserId = userModel._id //puxando id do usuario logado
-
-    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-    //ACTION
-    try {
       const charge = await payment.chargeById(req.params.id, resourcetoken);
       return res.status(200).send(charge)
 
@@ -105,17 +137,17 @@ module.exports = {
 
   //SEND CHARGE
   createCharge: async (req, res) => {
-    //FINDING COLLECTIONS 
-    const userSession = await MySession.find({})// puxando session do usuario 
-    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-    const loggedUserId = userModel._id //puxando id do usuario logado
-
-    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-    //  ACTION
     try {
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.find({})// puxando session do usuario 
+      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+
+      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+      const loggedUserId = userModel._id //puxando id do usuario logado
+
+      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+      //  ACTION
       if (loggedUserId) {
         const response = await payment.charge(req.body, resourcetoken);
 
@@ -137,17 +169,17 @@ module.exports = {
 
   //CARD PAYMENT (INSERT CREDITS)
   cardPayment: async (req, res) => {
-    //FINDING COLLECTIONS 
-    const userSession = await MySession.find({})// puxando session do usuario 
-    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-    const loggedUserId = userModel._id //puxando id do usuario logado
-
-    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-    //  ACTIONS
     try {
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.find({})// puxando session do usuario 
+      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+
+      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+      const loggedUserId = userModel._id //puxando id do usuario logado
+
+      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+      //  ACTIONS
       // const { email } = req.body.billing;
       // const userModel = await User.findOne({ email })
       const { chargeId } = req.body;
@@ -177,18 +209,18 @@ module.exports = {
 
   //USER BANK ACCOUNT
   bankAccount: async (req, res) => {
-    //FINDING COLLECTIONS 
-    const userSession = await MySession.find({})// puxando session do usuario 
-    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-    const loggedUserId = userModel._id //puxando id do usuario logado
-
-    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-
-
-    //  ACTIONS
     try {
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.find({})// puxando session do usuario 
+      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+
+      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+      const loggedUserId = userModel._id //puxando id do usuario logado
+
+      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+
+
+      //  ACTIONS
       // const { email } = req.body.billing;
       // const userModel = await User.findOne({ email })
       const { bankAccount } = req.body;
@@ -211,17 +243,17 @@ module.exports = {
 
   //BILL PAYMENT
   billPayment: async (req, res) => {
-    //FINDING COLLECTIONS 
-    const userSession = await MySession.find({})// puxando session do usuario 
-    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-    const loggedUserId = userModel._id //puxando id do usuario logado
-
-    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-    //  ACTION
     try {
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.find({})// puxando session do usuario 
+      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+
+      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+      const loggedUserId = userModel._id //puxando id do usuario logado
+
+      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+      //  ACTION
       // const { email } = req.body.billing;
       // const userModel = await User.findOne({ email })
 
@@ -248,18 +280,18 @@ module.exports = {
 
   //SALVAR CARTÃO - (TOKENIZAR)
   saveCard: async (req, res) => {
-    //FINDING COLLECTIONS 
-    const userSession = await MySession.find({})// puxando session do usuario
-    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-    const loggedUserId = userModel._id //puxando id do usuario logado
-
-    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-    //  ACTIONS
-    // const { email } = req.body;
     try {
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.find({})// puxando session do usuario
+      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+
+      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+      const loggedUserId = userModel._id //puxando id do usuario logado
+
+      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+      //  ACTIONS
+      // const { email } = req.body;
       const card_token = await payment.cardTokenize(req.body, req.headers.resourcetoken)
       // const saveCardOnUser = await User.updateOne({ email }, { ...req.body, cardHash: card_token })
       return res.status(200).send(card_token)
@@ -272,32 +304,43 @@ module.exports = {
 
   //CREATE DIGITAL ACCOUNT
   createAccount: async (req, res) => {
-
-    // ACTIONS
+    const { email } = req.body; // selecionando o campo email nos dados inseridos
+    const authorization = req.headers.authorization.split(" ")
+    const token = authorization[1]
     try {
-      const { email } = req.body; // selecionando o campo email nos dados inseridos
-      const userModel = await User.findOne({ email }) // criando uma pesquisa por email dentro da model User
+      //FINDING COLLECTIONS
+      const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario
+      const userSessionToken = userSession.session.token //token do usuario logado
+      const userSessionEmail = userSession.session.userEmail //email do usuario logado
 
-      // confirmando existencia do usuario pelo email
-      if (userModel) {
-        // encontrando usuario pelo email e atualizando
-        const userData = await User.findOneAndUpdate({ email }, { ...req.body })
-
-        // filtrando se o usuario existe pelo campo id das users models 
-        if (UserAccount.find({ userId: userModel._id })) {
-          // chamando função de criação de conta digital
-          const response = await payment.createAccount(req.body);
-
-          //criando a document no bd, enviando dados inserios e reposta da juno
-          const accountData = await UserAccount.create({ ...req.body, userId: userModel._id, junoAccountCreateResponse: response })
-
-          console.log({ userData, accountData })
-          return res.status(200).send({ message: "Conta criada com sucesso!", userData: userData, accountData: accountData })
-        } else {
-          return res.status(400).send({ message: "Usuário não encontrado." })
-        }
+      if (!(userSessionToken == token)) { //verificando de usuario pelo token
+        console.log('Usuario Não Identificado')
       } else {
-        return res.status(400).send({ message: "Usuário não tem registro na aplicação." });
+        console.log('Usuario Identificado')
+
+        // ACTIONS
+        const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+
+        if (userModel) {
+          // encontrando usuario pelo email e atualizando
+          const userData = await User.findOneAndUpdate({ email }, { ...req.body })
+
+          // filtrando se o usuario existe pelo campo id das users models 
+          if (UserAccount.find({ userId: userModel._id })) {
+            // chamando função de criação de conta digital
+            const response = await payment.createAccount(req.body);
+
+            //criando a document no bd, enviando dados inserios e reposta da juno
+            const accountData = await UserAccount.create({ ...req.body, userId: userModel._id, junoAccountCreateResponse: response })
+
+            console.log({ userData, accountData })
+            return res.status(200).send({ message: "Conta criada com sucesso!", userData: userData, accountData: accountData })
+          } else {
+            return res.status(400).send({ message: "Usuário não encontrado." })
+          }
+        } else {
+          return res.status(400).send({ message: "Usuário não tem registro na aplicação." });
+        }
       }
 
     } catch (err) {
@@ -311,20 +354,28 @@ module.exports = {
 
   //LIST PENDING DOCUMENTS
   listPendingDocuments: async (req, res) => {
-    //FINDING COLLECTIONS 
-    const userSession = await MySession.find({})// puxando session do usuario 
-    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-    const loggedUserId = userModel._id //puxando id do usuario logado
-
-    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-    //  ACTIONS
+    const authorization = req.headers.authorization.split(" ")
+    const token = authorization[1]
     try {
-      const pend_docs = await payment.listPendingDocuments(resourcetoken);
-      return res.status(200).send(pend_docs)
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
+      const userSessionToken = userSession.session.token //token do usuario logado
+      const userSessionEmail = userSession.session.userEmail //email do usuario logado
+      if (!(userSessionToken == token)) { //verificando de usuario pelo token
+        console.log('Usuario Não Identificado')
+      } else {
+        console.log('Usuario Identificado')
 
+        const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+        const loggedUserId = userModel._id //puxando id do usuario logado
+
+        const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+        const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+        //  ACTIONS
+        const pend_docs = await payment.listPendingDocuments(resourcetoken);
+        console.log(pend_docs)
+        return res.status(200).send(pend_docs)
+      }
     } catch (err) {
       return res.status(err.status || 400).send({ message: err.message });
     }
@@ -333,17 +384,17 @@ module.exports = {
 
   //SEND DOCUMENTS
   sendDocuments: async (req, res) => {
-    //FINDING COLLECTIONS 
-    const userSession = await MySession.find({})// puxando session do usuario 
-    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-    const loggedUserId = userModel._id //puxando id do usuario logado
-
-    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-    //  ACTIONS
     try {
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.find({})// puxando session do usuario 
+      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+
+      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+      const loggedUserId = userModel._id //puxando id do usuario logado
+
+      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+      //  ACTIONS
       const send_docs = await payment.sendDocuments(req.files, req.params.id, resourcetoken);
       console.log(req.params.id)
       return res.status(200).send(send_docs)
@@ -356,6 +407,7 @@ module.exports = {
 
   //PAGAMENTO DE CONTAS
   // billPayment: async (req, res) => {
+  //   try {
   //FINDING COLLECTIONS 
   // const userSession = await MySession.find({})// puxando session do usuario 
   //    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
@@ -366,7 +418,6 @@ module.exports = {
   //    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
   //    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
   //  ACTIONS
-  //   try {
   //     const body = req.body
   //     const pix_payment = await payment.billPayment(body, resourcetoken)
   //     console.log(pix_payment)
