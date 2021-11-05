@@ -113,8 +113,9 @@ module.exports = {
 
       }, (err) => {
         if (err) {
-          return res.status(400).send({ message: "Não é possível enviar o email", token });
+          return res.status(400).send({ message: "Não é possível enviar o email" });
         } else {
+          console.log(token)
           return res.status(200).send({ token })
         }
       })
