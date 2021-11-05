@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "NODE_ENV=development nodemon server.js"
+    "test": "NODE_ENV=development nodemon server.js",
+    "prod": "node server.js",
+    "dev": "NODE_ENV=development node server.js"
   },
   "keywords": [],
   "author": "Davi",
