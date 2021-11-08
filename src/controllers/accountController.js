@@ -30,6 +30,7 @@ module.exports = {
 
         //ACTION
         const balance = await payment.balance(resourcetoken);
+        console.log(balance)
         res.send(balance)
       }
     } catch (err) {
@@ -425,6 +426,7 @@ module.exports = {
   //     return res.status(err.status || 400).send({ message: err });
   //   }
   // },
+
 
 
 
