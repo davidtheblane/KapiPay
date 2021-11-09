@@ -36,7 +36,7 @@ module.exports = {
     } catch (err) {
       sentryError(err);
       // res.status(err.code || err.status || 400).send({ err: err.code, message: err.message });
-      res.status(err.status || 400).send({ message: err.message });
+      res.status(err.status || 400).send({ err: err.message });
 
     }
   },
@@ -386,7 +386,7 @@ module.exports = {
         const response = await payment.listPendingDocuments(resourcetoken);
 
         //salvand o id dos documentos no bd
-        await UserAccount.findOneAndUpdate({ userId: loggedUserId, docId: response[0].id, selfieId: response[1].id })
+        await UserAccount.findOneAndUpdate({ userId: loggedUserId }, { docId: response[0].id, selfieId: response[1].id })
 
         return res.status(200).send(response)
       }
@@ -398,9 +398,14 @@ module.exports = {
 
   //SEND DOCUMENTS
   sendDocuments: async (req, res) => {
+    console.log('chegou no controller send documents Back')
     const authorization = req.headers.authorization.split(" ")
     const token = authorization[1]
+
     try {
+      const file = req.body[0] // envio do browser
+      console.log(req.files) // envio do Insomnia
+
       //FINDING COLLECTIONS
       const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario
       const userSessionToken = userSession.session.token //token do usuario logado
@@ -417,7 +422,7 @@ module.exports = {
         const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
 
         //  ACTIONS
-        //acessando o id do doc correto no banco de dados
+        // acessando o id do doc correto no banco de dados
         if (req.params.id == 'doc') {
           let id = userAccountModel.docId
           console.log(id)
@@ -427,7 +432,7 @@ module.exports = {
         else if (req.params.id == 'selfie') {
           let id = userAccountModel.selfieId
           console.log(id)
-          const response = await payment.sendDocuments(req.files, id, resourcetoken);
+          const response = await payment.sendDocuments(req.body, id, resourcetoken);
           return res.status(200).send(response)
         }
       }
