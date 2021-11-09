@@ -63,8 +63,6 @@ const payment = {
     return instance;
   },
 
-
-
   //----> GET BALANCE
   balance: async (resourcetoken) => {
     try {
@@ -232,7 +230,7 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         },
       });
-      return res.data;
+      return res.data._embedded.documents;
     } catch (err) {
       throw err.response.data;
     }
