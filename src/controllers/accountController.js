@@ -403,9 +403,6 @@ module.exports = {
     const token = authorization[1]
 
     try {
-      const file = req.body[0] // envio do browser
-      console.log(req.files) // envio do Insomnia
-
       //FINDING COLLECTIONS
       const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario
       const userSessionToken = userSession.session.token //token do usuario logado
@@ -422,11 +419,14 @@ module.exports = {
         const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
 
         //  ACTIONS
+        const file = req.body[0] // envio do browser
+        console.log(file)
+        // console.log(req.files) // envio do Insomnia
         // acessando o id do doc correto no banco de dados
         if (req.params.id == 'doc') {
           let id = userAccountModel.docId
           console.log(id)
-          const response = await payment.sendDocuments(req.files, id, resourcetoken);
+          const response = await payment.sendDocuments(file, id, resourcetoken);
           return res.status(200).send(response)
         }
         else if (req.params.id == 'selfie') {

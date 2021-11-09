@@ -256,11 +256,11 @@ const payment = {
           },
         })
         .catch((err) => {
-          console.log(err.response.data);
+          console.log(err.response);
         });
       return res.data;
     } catch (err) {
-      throw err.response.data;
+      throw err;
     }
   },
 
