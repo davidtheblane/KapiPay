@@ -398,7 +398,6 @@ module.exports = {
 
   //SEND DOCUMENTS
   sendDocuments: async (req, res) => {
-    console.log('chegou no controller send documents Back')
     const authorization = req.headers.authorization.split(" ")
     const token = authorization[1]
 
@@ -419,20 +418,18 @@ module.exports = {
         const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
 
         //  ACTIONS
-        const file = req.body[0] // envio do browser
-        console.log(file)
-        // console.log(req.files) // envio do Insomnia
+        const file = req.body.formData;
+        // console.log(file)
+        // const file = req.files // envio do Insomnia
         // acessando o id do doc correto no banco de dados
         if (req.params.id == 'doc') {
           let id = userAccountModel.docId
-          console.log(id)
           const response = await payment.sendDocuments(file, id, resourcetoken);
           return res.status(200).send(response)
         }
         else if (req.params.id == 'selfie') {
           let id = userAccountModel.selfieId
-          console.log(id)
-          const response = await payment.sendDocuments(req.body, id, resourcetoken);
+          const response = await payment.sendDocuments(file, id, resourcetoken);
           return res.status(200).send(response)
         }
       }

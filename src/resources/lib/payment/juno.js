@@ -2,7 +2,7 @@ const axios = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
 const path = require("path");
-require('dotenv').config()
+require("dotenv").config();
 
 const config = {
   baseUrlAuth: process.env.JUNO_AUTH_URL,
@@ -10,12 +10,10 @@ const config = {
   path: "oauth/token",
   id: process.env.JUNO_ID,
   secret: process.env.JUNO_SECRET,
-  mainResourceToken:
-    process.env.JUNO_MAIN_RESOURCE_TOKEN
+  mainResourceToken: process.env.JUNO_MAIN_RESOURCE_TOKEN,
 };
 
 const payment = {
-
   //----> INIT AUTHORIZATION
   initAuth: async () => {
     const encoded = Buffer.from(`${config.id}:${config.secret}`).toString(
@@ -70,7 +68,7 @@ const payment = {
       const res = await instance.get("balance", {
         headers: {
           "X-Resource-Token": resourcetoken,
-        }
+        },
       });
       return res.data;
     } catch (err) {
@@ -85,12 +83,12 @@ const payment = {
       const res = await instance.get("digital-accounts", {
         headers: {
           "X-Resource-Token": resourcetoken,
-        }
+        },
       });
 
-      return res.data
+      return res.data;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw err.response.data;
     }
   },
@@ -117,7 +115,7 @@ const payment = {
       const res = await instance.get(`charges/${id}`, {
         headers: {
           "X-Resource-Token": resourcetoken,
-        }
+        },
       });
       return res.data;
     } catch (err) {
@@ -179,9 +177,8 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         },
       });
-      console.log(res.data.payments[0])
+      console.log(res.data.payments[0]);
       return res.data.payments[0];
-
     } catch (err) {
       throw err.response.data;
     }
@@ -202,7 +199,6 @@ const payment = {
     }
   },
 
-
   //----> CREATE DIGITAL ACCOUNT - utiliza JSON no corpo
   createAccount: async (body) => {
     try {
@@ -217,9 +213,7 @@ const payment = {
     } catch (err) {
       throw err.response.data;
     }
-
   },
-
 
   //----> LIST PENDING DOCUMENTS
   listPendingDocuments: async (resourcetoken) => {
@@ -239,13 +233,19 @@ const payment = {
   //----> SENDING DOCUMENTS - utiliza Multipart Form
   sendDocuments: async (file, id, resourcetoken) => {
     try {
+      console.log("file", file);
       const instance = await payment.init();
 
       const { buffer, originalname } = file[0];
-      const filename = originalname;
+      // const filename = originalname;
+      // console.log("filename", filename);
 
       const formData = new FormData();
-      formData.append("files", buffer, { filename });
+      formData.append("files", buffer, {
+        contentType: file.mimetype,
+        filename: file.originalname,
+      });
+      console.log("formData", formData[0]);
 
       const res = await instance
         .post(`documents/${id}/files`, formData, {
@@ -256,9 +256,10 @@ const payment = {
           },
         })
         .catch((err) => {
-          console.log(err.response);
+          console.log(err);
         });
-      return res.data;
+      console.log(res)
+      return res;
     } catch (err) {
       throw err;
     }
@@ -275,6 +276,5 @@ const payment = {
   //   console.log(res.data);
   //   return res.data;
   // },
-
 };
 module.exports = payment;
