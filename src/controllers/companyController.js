@@ -11,8 +11,18 @@ module.exports = {
   // GET COMPANIES
   getCompany: async (req, res) => {
     try {
-      const companies = await await Company.find({})
+      const companies = await Company.find({})
       res.status(200).send(companies)
+    } catch (err) {
+      sentryError(err);
+      return res.status(400).send(err);
+    }
+  },
+
+  getCompanyType: async (req, res) => {
+    try {
+      const company_type = await CompanyType.find({})
+      res.status(200).send(company_type)
     } catch (err) {
       sentryError(err);
       return res.status(400).send(err);
@@ -35,18 +45,18 @@ module.exports = {
   newCompany: async (req, res) => {
     try {
       const { company } = req.body
+      // console.log(company)
 
       if (company.cnpj.length != 14) { return res.status(403).send({ message: "CNPJ Inválido" }) }
 
       const companyModel = await Company.findOne({ cnpj: company.cnpj })
-      // console.log(`companyModel${companyModel}`)
-      if (companyModel) {
-        return res.status(403).send({ message: "Já existe uma empresa com esse cnpj" })
-      }
-      else {
-        const response = await Company.create(company);
-        return res.status(200).send(response)
-      }
+
+      if (companyModel) { return res.status(403).send({ message: "Já existe uma empresa com esse cnpj" }) }
+
+      const response = await Company.create(company);
+
+      const companyType = await CompanyType.create({ name: response.companyType, companyId: response._id })
+      return res.status(200).send(response)
 
     } catch (err) {
       sentryError(err);
@@ -54,5 +64,23 @@ module.exports = {
     }
   },
 
+  // newCompanyType: async (req, res) => {
+  //   try {
+  //     const { companyType } = req.body
 
+  //     const companyTypeModel = await CompanyType.findOne({ name: companyType.name })
+  //     console.log("companyModel", companyTypeModel)
+  //     if (companyTypeModel) {
+  //       return res.status(403).send({ message: "Esse serviço já foi cadastrado" })
+  //     }
+  //     else {
+  //       const response = await CompanyType.create(companyType);
+  //       return res.status(200).send(response)
+  //     }
+
+  //   } catch (err) {
+  //     sentryError(err);
+  //     return res.status(400).send(err.message);
+  //   }
+  // },
 }

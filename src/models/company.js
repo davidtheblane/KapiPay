@@ -16,13 +16,23 @@ const CompanySchema = new mongoose.Schema({
     require: true,
   },
 
+  companyType: {
+    type: String,
+    require: true,
+  },
+
   description: {
     type: String,
   },
 
+  companyTypeId: {
+    type: mongoose.ObjectId,
+    ref: `CompanyType`
+  },
+
   invoiceId: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: 'Invoice._id'
+    type: mongoose.ObjectId,
+    ref: `Invoice`
   }
 });
 

@@ -33,6 +33,8 @@ router.get('/account/charges/:id', accountController.chargeByChargeId)
 router.get('/account/status', accountController.accountStatus)
 router.get('/account/documents', accountController.listPendingDocuments)
 router.get('/account/company', companyController.getCompany)
+router.get('/account/company/type', companyController.getCompanyType)
+
 //Account Routes - POST
 router.post('/account/create', accountController.createAccount)
 router.post('/account/charge', accountController.createCharge)
@@ -42,6 +44,8 @@ router.post('/account/save_card', accountController.saveCard)
 router.post('/account/bank_account', accountController.bankAccount)
 router.post('/account/bill_payment', accountController.billPayment)
 router.post('/account/company', companyController.newCompany)
+// router.post('/account/company/type', companyController.newCompanyType)
+
 
 // router.get('/account/invoices', invoiceController.invoices)
 // router.post('/account/invoice_insert', invoiceController.createInvoice)
