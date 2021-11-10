@@ -55,7 +55,7 @@ module.exports = {
 
       const response = await Company.create(company);
 
-      const companyType = await CompanyType.create({ name: response.companyType, companyId: response._id })
+      // const companyType = await CompanyType.create({ name: response.companyType, companyId: response._id })
       return res.status(200).send(response)
 
     } catch (err) {
