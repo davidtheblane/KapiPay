@@ -57,6 +57,14 @@ const UserAccountSchema = new mongoose.Schema({
   // Usa Hash pra tokenizar um cartão
   cardToken: {
     type: Object
+  },
+
+  docId: {
+    type: String
+  },
+
+  selfieId: {
+    type: String
   }
 });
 

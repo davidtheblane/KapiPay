@@ -26,6 +26,11 @@ module.exports = {
 
   //Registrar usuário
   createUser: async (req, res) => {
+    /**
+     * #swagger.tags = ['Login']
+     * #swagger.description = 'Endpoint para registrar na aplicação.'
+     * 
+     */
     const { email } = req.body;
 
     try {
@@ -49,6 +54,12 @@ module.exports = {
 
   //Login Usuário
   authUser: async (req, res) => {
+    /**
+     * #swagger.tags = ['Login']
+     * #swagger.description = 'Endpoint para logar na aplicação.'
+     * #swagger.parameters['email'] = { description: 'User Email.', type: 'string', required: true, in:'body' }
+     * #swagger.parameters['password'] = { description: 'User password.', type: 'string', required: true, in:'body' }
+     */
     try {
       const { email, password } = req.body;
 
@@ -71,9 +82,14 @@ module.exports = {
 
   //Forgot password
   forgotPassword: async (req, res) => {
+    /**
+     * #swagger.tags = ['Login']
+     * #swagger.description = 'Endpoint para recuperar senha.'
+     * 
+     */
 
-    const { email } = req.body;
     try {
+      const { email } = req.body;
       const user = await User.findOne({ email });
       if (!user)
         return res.status(400).send({ message: "Usuário não encontrado." });
@@ -128,9 +144,14 @@ module.exports = {
 
   //Reset password
   passwordReset: async (req, res) => {
-    const { email, token, password } = req.body;
+    /**
+      * #swagger.tags = ['Login']
+      * #swagger.description = 'Endpoint para trocar a senha.'
+      * 
+      */
 
     try {
+      const { email, token, password } = req.body;
       const user = await User.findOne({ email })
         .select('+passwordResetToken passwordResetExpires');
 

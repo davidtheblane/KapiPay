@@ -6,10 +6,14 @@ const CompanyTypeSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  cnpj: {
+    type: String,
+    require: true,
+  },
 
-  CompanyId: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: `Company._id`
+  companyId: {
+    type: mongoose.ObjectId,
+    ref: `Company`
   }
 });
 

@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "readmeFilename": "README.md",
+  "private": false,
   "scripts": {
     "start": "nodemon server.js",
     "test": "NODE_ENV=development nodemon server.js",
     "prod": "node server.js",
-    "dev": "NODE_ENV=development node server.js"
+    "dev": "NODE_ENV=development node server.js",
+    "swagger-autogen": "node swagger.js"
   },
   "keywords": [],
   "author": "Davi",
@@ -36,6 +39,8 @@
     "nodemailer-express-handlebars": "^4.0.0",
     "path": "^0.12.7",
     "soap": "^0.42.0",
+    "swagger-autogen": "^2.12.6",
+    "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6",
     "xml-to-json-stream": "^1.1.0"
   },
