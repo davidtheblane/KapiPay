@@ -298,22 +298,33 @@ module.exports = {
 
   //SALVAR CARTÃO - (TOKENIZAR)
   saveCard: async (req, res) => {
+    const data = req.body
+    const authorization = req.headers.authorization.split(" ")
+    const token = authorization[1]
     try {
       //FINDING COLLECTIONS 
-      const userSession = await MySession.find({})// puxando session do usuario
-      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+      const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
+      const userSessionToken = userSession.session.token //token do usuario logado
+      const userSessionEmail = userSession.session.userEmail //email do usuario logado
+      if (!(userSessionToken == token)) { //verificando de usuario pelo token
+        console.log('Usuario Não Identificado')
+      } else {
+        console.log('Usuario Identificado')
 
-      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-      const loggedUserId = userModel._id //puxando id do usuario logado
+        const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+        const loggedUserId = userModel._id //puxando id do usuario logado
 
-      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-      //  ACTIONS
-      // const { email } = req.body;
-      const card_token = await payment.cardTokenize(req.body, req.headers.resourcetoken)
-      // const saveCardOnUser = await User.updateOne({ email }, { ...req.body, cardHash: card_token })
-      return res.status(200).send(card_token)
+        const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+        const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
 
+        //  ACTIONS
+        const response = await payment.cardTokenize(data, resourcetoken)
+        console.log(response)
+        await UserAccount.findOneAndUpdate({ userId: loggedUserId, cardToken: response })
+
+        return res.status(200).send(response)
+
+      }
     } catch (err) {
       return res.status(err.status || 400).send({ message: err.message });
     }
@@ -445,30 +456,6 @@ module.exports = {
       return res.status(err.status || 400).send(err);
     }
   },
-
-
-  //PAGAMENTO DE CONTAS
-  // billPayment: async (req, res) => {
-  //   try {
-  //FINDING COLLECTIONS 
-  // const userSession = await MySession.find({})// puxando session do usuario 
-  //    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-  //    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-  //    const loggedUserId = userModel._id //puxando id do usuario logado
-
-  //    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-  //    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-  //  ACTIONS
-  //     const body = req.body
-  //     const pix_payment = await payment.billPayment(body, resourcetoken)
-  //     console.log(pix_payment)
-  //   } catch (err) {
-  //     return res.status(err.status || 400).send({ message: err });
-  //   }
-  // },
-
-
 
 
   //PIX PAYMENT (INSERT CREDITS)
