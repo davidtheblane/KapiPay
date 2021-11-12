@@ -51,7 +51,7 @@ module.exports = {
 
       const companyModel = await Company.findOne({ cnpj: company.cnpj })
 
-      if (companyModel) { return res.status(403).send({ message: "Já existe uma empresa com esse cnpj" }) }
+      if (companyModel) { return res.status(403).send({ message: "Já existe uma empresa com esse cnpj." }) }
 
       const response = await Company.create(company);
 

@@ -25,6 +25,8 @@ router.use(authMiddleware)
 //Users
 router.get('/users', userController.listUsers)
 router.get('/users/:id', userController.getUser)
+router.get('/user/data', userController.userData)
+
 
 //Account Routes - GET
 router.get('/account/balance', accountController.getUserBalance)

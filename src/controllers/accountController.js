@@ -30,7 +30,7 @@ module.exports = {
 
         //ACTION
         const balance = await payment.balance(resourcetoken);
-        console.log(balance)
+        console.log(balance.balance)
         res.send(balance)
       }
     } catch (err) {
@@ -220,37 +220,44 @@ module.exports = {
 
   //USER BANK ACCOUNT
   bankAccount: async (req, res) => {
+    const data = req.body
+    const authorization = req.headers.authorization.split(" ")
+    const token = authorization[1]
     try {
       //FINDING COLLECTIONS 
-      const userSession = await MySession.find({})// puxando session do usuario 
-      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-      const loggedUserId = userModel._id //puxando id do usuario logado
-
-      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-
-
-      //  ACTIONS
-      // const { email } = req.body.billing;
-      // const userModel = await User.findOne({ email })
-      const { bankAccount } = req.body;
-      console.log(bankAccount)
-
-      if (userModel) {
-        console.log('usermodel existe')
-        const userBankAccount = await UserAccount.findOneAndUpdate({ "userId": loggedUserId }, { bankAccount: bankAccount });
-
-        return res.status(200).send(userBankAccount)
+      const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
+      const userSessionToken = userSession.session.token //token do usuario logado
+      const userSessionEmail = userSession.session.userEmail //email do usuario logado
+      if (!(userSessionToken == token)) { //verificando de usuario pelo token
+        console.log('Usuario Não Identificado')
       } else {
-        return res.status(400).send({ message: 'Usuario não existe.' })
-      }
+        console.log('Usuario Identificado')
 
+        const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+        const loggedUserId = userModel._id //puxando id do usuario logado
+
+        const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+
+        //  ACTIONS
+        const { bankAccount } = req.body;
+        console.log(bankAccount)
+
+        if (userModel) {
+          console.log('usermodel existe')
+          const userBankAccount = await UserAccount.findOneAndUpdate({ "userId": loggedUserId }, { bankAccount: bankAccount });
+
+          return res.status(200).send(userBankAccount)
+        } else {
+          return res.status(400).send({ message: 'Usuario não existe.' })
+        }
+      }
     } catch (err) {
       sentryError(err);
       return res.status(err.status || 400).send({ message: err.message });
     }
   },
+
+
 
   //BILL PAYMENT
   billPayment: async (req, res) => {
