@@ -63,7 +63,7 @@ module.exports = {
         const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
         //ACTION
         const status = await payment.accountStatus(resourcetoken);
-        console.log(status)
+        // console.log(status)
         return res.status(200).send(status)
       }
 
@@ -298,7 +298,7 @@ module.exports = {
 
   //SALVAR CARTÃO - (TOKENIZAR)
   saveCard: async (req, res) => {
-    const data = req.body
+    const creditCardHash = req.body
     const authorization = req.headers.authorization.split(" ")
     const token = authorization[1]
     try {
@@ -318,15 +318,15 @@ module.exports = {
         const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
 
         //  ACTIONS
-        const response = await payment.cardTokenize(data, resourcetoken)
-        console.log(response)
+        const response = await payment.cardTokenize(creditCardHash, resourcetoken)
         await UserAccount.findOneAndUpdate({ userId: loggedUserId, cardToken: response })
 
-        return res.status(200).send(response)
+        console.log(response)
+        return res.status(200).send({ message: "Cartão cadastrado com sucesso!" })
 
       }
     } catch (err) {
-      return res.status(err.status || 400).send({ message: err.message });
+      return res.status(err.status || 400).send(err);
     }
   },
 

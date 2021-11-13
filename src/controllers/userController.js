@@ -28,12 +28,10 @@ module.exports = {
     }
   },
 
-
   //Listar Dados do Usuário
   userData: async (req, res) => {
     const authorization = req.headers.authorization.split(" ")
     const token = authorization[1]
-    console.log(token)
     try {
       //FINDING COLLECTIONS
       const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
@@ -50,19 +48,56 @@ module.exports = {
         const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
 
         //ACTION
-        userProfile = {
-          name: userModel.name,
-          email: userModel.email,
-          address: userModel.address,
-          birthDate: userModel.birthDate,
-          document: userModel.document,
-          monthlyIncomeOrRevenue: userModel.monthlyIncomeOrRevenue,
-          phone: userModel.phone,
-          bankAccount: userAccountModel.bankAccount
-        }
+        // userProfile = {
+        //   name: userModel.name,
+        //   email: userModel.email,
+        //   birthDate: userModel.birthDate,
+        //   document: userModel.document,
+        //   monthlyIncomeOrRevenue: userModel.monthlyIncomeOrRevenue,
+        //   phone: userModel.phone,
+        //   address: userModel.address,
+        //   bankAccount: userAccountModel.bankAccount,
+        //   cardToken: userAccountModel.cardToken
+        // }
 
-        console.log(userProfile)
+        userProfile = [
+          {
+            name: userModel.name,
+            email: userModel.email,
+            birthDate: userModel.birthDate,
+            document: userModel.document,
+            phone: userModel.phone,
+            monthlyIncomeOrRevenue: userModel.monthlyIncomeOrRevenue,
+          },
 
+          {
+            street: userModel.address.street,
+            number: userModel.address.number,
+            complement: userModel.address.complement,
+            neighborhood: userModel.address.neighborhood,
+            city: userModel.address.city,
+            state: userModel.address.state,
+            postCode: userModel.address.postCode,
+          },
+
+          {
+            bankNumber: userAccountModel.bankAccount.bankNumber,
+            agencyNumber: userAccountModel.bankAccount.agencyNumber,
+            accountNumber: userAccountModel.bankAccount.accountNumber,
+            accountComplementNumber: userAccountModel.bankAccount.accountComplementNumber,
+            accountType: userAccountModel.bankAccount.accountType,
+          },
+
+          {
+            last4CardNumber: userAccountModel.cardToken.last4CardNumber,
+            expirationMonth: userAccountModel.cardToken.expirationMonth,
+            expirationYear: userAccountModel.cardToken.expirationYear
+          }
+
+        ]
+
+
+        // console.log(userProfile)
         return res.status(200).send(userProfile)
       }
 
@@ -71,7 +106,6 @@ module.exports = {
 
     } catch (err) {
       sentryError(err);
-      console.log(err)
       return res.status(err.status || 400).send(err);
     }
 

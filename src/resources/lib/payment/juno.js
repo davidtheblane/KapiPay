@@ -195,7 +195,7 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err.response.data;
+      throw err;
     }
   },
 
