@@ -139,15 +139,15 @@ module.exports = {
 
   //SEND CHARGE
   createCharge: async (req, res) => {
-    const data = req.body
-    const authorization = req.headers.authorization.split(" ")
-    const token = authorization[1]
     try {
+      const authorization = req.headers.authorization.split(" ")
+      const token = authorization[1]
+      const { data } = req.body
       //FINDING COLLECTIONS 
       const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
       const userSessionToken = userSession.session.token //token do usuario logado
       const userSessionEmail = userSession.session.userEmail //email do usuario logado
-      if (!(userSessionToken == token)) { //verificando de usuario pelo token
+      if (!(userSessionToken == token)) { //verificando usuario pelo token
         console.log('Usuario Não Identificado')
       } else {
         console.log('Usuario Identificado')
@@ -158,22 +158,48 @@ module.exports = {
         const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
         const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
 
-        //  ACTION
-        if (loggedUserId) {
-          const response = await payment.charge(data, resourcetoken);
-
-          if (UserInvoice.find({ userAccountId: userModel._id })) {
-            const invoice = await UserInvoice.create({ invoiceInfo: response, userAccountId: userModel._id })
-
-            res.status(200).send(invoice)
+        // ACTION
+        // formatando o objeto para envio
+        const obj = {
+          charge: {
+            description: data.description,
+            amount: data.amount,
+            dueDate: data.dueDate,
+            paymentAdvance: true,
+            paymentTypes: ['CREDIT_CARD', 'BOLETO'],
+          },
+          billing: {
+            name: userModel.name,
+            document: userModel.document,
+            email: userModel.email,
+            address: userModel.address,
+            notify: false
           }
-        } else {
-          return res.status(400).send({ message: "Usuário não tem registro." });
         }
+        const response = await payment.charge(obj, resourcetoken);
+        // formatando o objeto para armazenar no bd
+        const invoiceInfo = {
+          id: response.id,
+          code: response.code,
+          status: response.status,
+          companyName: data.companyName,
+          amount: data.amount,
+          dueDate: data.dueDate,
+          barcodeNumber: data.barcodeNumber,
+          description: data.description,
+          junoBilletDetails: response.billetDetails
+        }
+
+        if (UserInvoice.find({ userAccountId: loggedUserId })) {
+          await UserInvoice.create({ invoiceInfo: invoiceInfo, userAccountId: loggedUserId })
+
+          res.status(200).send({ message: "Cobrança criada e agendada!" })
+        }
+
       }
     } catch (err) {
       sentryError(err);
-      return res.status(400).send({ message: err });
+      return res.status(400).send(err.response);
     }
   },
 
@@ -256,7 +282,6 @@ module.exports = {
       return res.status(err.status || 400).send({ message: err.message });
     }
   },
-
 
 
   //BILL PAYMENT
