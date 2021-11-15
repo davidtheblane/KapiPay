@@ -45,7 +45,7 @@ module.exports = {
   newCompany: async (req, res) => {
     try {
       const { company } = req.body
-      // console.log(company)
+      console.log(company)
 
       if (company.cnpj.length != 14) { return res.status(403).send({ message: "CNPJ Inválido" }) }
 

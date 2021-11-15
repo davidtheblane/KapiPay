@@ -193,13 +193,13 @@ module.exports = {
         if (UserInvoice.find({ userAccountId: loggedUserId })) {
           await UserInvoice.create({ invoiceInfo: invoiceInfo, userAccountId: loggedUserId })
 
-          res.status(200).send({ message: "Cobrança criada e agendada!" })
+          res.status(200).send(invoiceInfo)
         }
 
       }
     } catch (err) {
       sentryError(err);
-      return res.status(400).send(err.response);
+      return res.status(400).send(err);
     }
   },
 

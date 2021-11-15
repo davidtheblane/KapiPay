@@ -34,8 +34,8 @@ router.get('/account/charges', accountController.listCharges)
 router.get('/account/charges/:id', accountController.chargeByChargeId)
 router.get('/account/status', accountController.accountStatus)
 router.get('/account/documents', accountController.listPendingDocuments)
+router.get('/account/company-type', companyController.getCompanyType)
 router.get('/account/company', companyController.getCompany)
-router.get('/account/company/type', companyController.getCompanyType)
 
 //Account Routes - POST
 router.post('/account/create', accountController.createAccount)
