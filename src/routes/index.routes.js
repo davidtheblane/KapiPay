@@ -30,8 +30,8 @@ router.get('/user/data', userController.userData)
 
 //Account Routes - GET
 router.get('/account/balance', accountController.getUserBalance)
-router.get('/account/charges', accountController.listCharges)
-router.get('/account/charges/:id', accountController.chargeByChargeId)
+router.get('/account/invoices', accountController.listInvoices)
+router.get('/account/invoices/:id', accountController.invoiceById)
 router.get('/account/status', accountController.accountStatus)
 router.get('/account/documents', accountController.listPendingDocuments)
 router.get('/account/company-type', companyController.getCompanyType)
@@ -39,7 +39,7 @@ router.get('/account/company', companyController.getCompany)
 
 //Account Routes - POST
 router.post('/account/create', accountController.createAccount)
-router.post('/account/charge', accountController.createCharge)
+router.post('/account/invoice', accountController.createInvoice)
 router.post('/account/documents/:id', accountController.sendDocuments)
 router.post('/account/payment_card', accountController.cardPayment)
 router.post('/account/save_card', accountController.saveCard)
