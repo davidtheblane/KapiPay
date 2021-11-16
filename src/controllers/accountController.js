@@ -194,6 +194,9 @@ module.exports = {
         const loggedUserId = userModel._id //puxando id do usuario logado
 
         const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+        const userInvoices = await UserInvoice.find({ userAccountId: loggedUserId })
+
+
         const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
 
         // ACTION
@@ -203,24 +206,26 @@ module.exports = {
             description: data.description,
             amount: data.amount,
             dueDate: data.dueDate,
-            paymentAdvance: true,
+            paymentAdvance: false,
             paymentTypes: ['CREDIT_CARD', 'BOLETO'],
           },
           billing: {
             name: userModel.name,
-            document: userModel.document,
+            document: data.cnpj,
             email: userModel.email,
             address: userModel.address,
             notify: false
           }
         }
         const response = await payment.charge(obj, resourcetoken);
+
         // formatando o objeto para armazenar no bd
         const invoiceInfo = {
           id: response.id,
           code: response.code,
           status: response.status,
           companyName: data.companyName,
+          document: data.cnpj || data.document,
           amount: data.amount,
           dueDate: data.dueDate,
           barcodeNumber: data.barcodeNumber,
@@ -228,15 +233,14 @@ module.exports = {
           junoBilletDetails: response.billetDetails
         }
 
-        if (UserInvoice.find({ userAccountId: loggedUserId })) {
+        if (userInvoices) {
           await UserInvoice.create({ invoiceInfo: invoiceInfo, userAccountId: loggedUserId })
-
           res.status(200).send(invoiceInfo)
         }
-
       }
     } catch (err) {
       sentryError(err);
+      console.log(err)
       return res.status(400).send(err);
     }
   },

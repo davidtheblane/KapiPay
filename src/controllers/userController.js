@@ -82,7 +82,7 @@ module.exports = {
           return res.status(200).send(userProfile)
 
         } else {
-          console.log("Usuário nao tem conta digital criada")
+          console.log("Usuário tem conta digital criada")
           const userProfile = [
             {
               name: userModel.name,
@@ -118,7 +118,7 @@ module.exports = {
             }
 
           ]
-          console.log(userProfile)
+          // console.log(userProfile)
           return res.status(200).send(userProfile)
         }
 
