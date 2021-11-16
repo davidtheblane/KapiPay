@@ -49,10 +49,6 @@ module.exports = {
 
       if (company.cnpj.length != 14) { return res.status(403).send({ message: "CNPJ Inválido" }) }
 
-      const companyModel = await Company.findOne({ cnpj: company.cnpj })
-
-      if (companyModel) { return res.status(403).send({ message: "Já existe uma empresa com esse cnpj." }) }
-
       const response = await Company.create(company);
 
       // const companyType = await CompanyType.create({ name: response.companyType, companyId: response._id })
