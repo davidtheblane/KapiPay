@@ -212,7 +212,7 @@ const payment = {
       console.log(res.data);
       return res.data;
     } catch (err) {
-      throw err.response.data;
+      throw err;
     }
   },
 
