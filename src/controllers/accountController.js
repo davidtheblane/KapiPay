@@ -30,7 +30,7 @@ module.exports = {
 
         //ACTION
         const balance = await payment.balance(resourcetoken);
-        console.log(balance)
+        console.log(balance.balance)
         res.send(balance)
       }
     } catch (err) {
@@ -63,7 +63,7 @@ module.exports = {
         const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
         //ACTION
         const status = await payment.accountStatus(resourcetoken);
-        console.log(status)
+        // console.log(status)
         return res.status(200).send(status)
       }
 
@@ -75,7 +75,55 @@ module.exports = {
   },
 
   //LIST CHARGES
-  listCharges: async (req, res) => {
+  // listCharges: async (req, res) => {
+  //   const authorization = req.headers.authorization.split(" ")
+  //   const token = authorization[1]
+  //   try {
+  //     //FINDING COLLECTIONS 
+  //     const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
+  //     const userSessionToken = userSession.session.token //token do usuario logado
+  //     const userSessionEmail = userSession.session.userEmail //email do usuario logado
+  //     if (!(userSessionToken == token)) { //verificando de usuario pelo token
+  //       console.log('Usuario Não Identificado')
+  //     } else {
+  //       console.log('Usuario Identificado')
+
+  //       const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+  //       const loggedUserId = userModel._id //puxando id do usuario logado
+
+  //       const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+  //       const userInvoices = await UserInvoice.find({ userAccountId: loggedUserId })
+  //       const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+
+  //       //ACTION
+  //       const response = await payment.listCharges(resourcetoken);
+
+  //       const charges = response.map(item => {
+  //         let charge = {
+  //           id: item.id,
+  //           code: item.code,
+  //           status: item.status,
+  //           junoBilletDetails: item.billetDetails,
+  //           payments: item.payments
+  //         }
+  //         return charge
+  //       })
+  //       // console.log(charges[0])
+
+  //       // const invoicesUpdated = await UserInvoice.find({ "invoiceInfo": charges })
+  //       // console.log("invoices", invoicesUpdated)
+
+  //       return res.status(200).send(charges)
+  //     }
+
+
+  //   } catch (err) {
+  //     console.log(err)
+  //     return res.status(err.status || 400).send(err);
+  //   }
+  // },
+
+  listInvoices: async (req, res) => {
     const authorization = req.headers.authorization.split(" ")
     const token = authorization[1]
     try {
@@ -92,21 +140,11 @@ module.exports = {
         const loggedUserId = userModel._id //puxando id do usuario logado
 
         const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-        const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-        //ACTION
-        const response = await payment.listCharges(resourcetoken);
-        const chargeId = response.charges[0].id
-        console.log(response)
-        return res.status(200).send(response)
-      }
-      // ESTA DANDO ERRO DE SESSION NULL NO INSOMNIA, FAZER A CHAMADA PELO NAVEGADOR
+        const userInvoices = await UserInvoice.find({ userAccountId: loggedUserId })
 
-      // if (UserInvoice.find({ userAccountId: loggedUserId })) {
-      //   const charges = await UserInvoice.updateMany({ "invoiceInfo.id": chargeId, userAccountId: loggedUserId })
-      //   return res.status(200).send(response.charges[0])
-      // } else {
-      //   console.log('erro')
-      // }
+        return res.status(200).send(userInvoices)
+      }
+
 
     } catch (err) {
       console.log(err)
@@ -116,7 +154,7 @@ module.exports = {
 
 
   //LIST CHARGE by Charge Id
-  chargeByChargeId: async (req, res) => {
+  invoiceById: async (req, res) => {
     try {
       //FINDING COLLECTIONS 
       const userSession = await MySession.find({})// puxando session do usuario 
@@ -138,8 +176,204 @@ module.exports = {
 
 
   //SEND CHARGE
-  createCharge: async (req, res) => {
+  createInvoice: async (req, res) => {
+    try {
+      const authorization = req.headers.authorization.split(" ")
+      const token = authorization[1]
+      const { data } = req.body
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
+      const userSessionToken = userSession.session.token //token do usuario logado
+      const userSessionEmail = userSession.session.userEmail //email do usuario logado
+      if (!(userSessionToken == token)) { //verificando usuario pelo token
+        console.log('Usuario Não Identificado')
+      } else {
+        console.log('Usuario Identificado')
+
+        const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+        const loggedUserId = userModel._id //puxando id do usuario logado
+
+        const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+        const userInvoices = await UserInvoice.find({ userAccountId: loggedUserId })
+
+
+        const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+
+        // ACTION
+        // formatando o objeto para envio à juno
+        const obj = {
+          charge: {
+            description: data.description,
+            amount: data.amount,
+            dueDate: data.dueDate,
+            paymentAdvance: false,
+            paymentTypes: ['CREDIT_CARD', 'BOLETO'],
+          },
+          billing: {
+            name: userModel.name,
+            document: data.cnpj,
+            email: userModel.email,
+            address: userModel.address,
+            notify: false
+          }
+        }
+        const response = await payment.charge(obj, resourcetoken);
+
+        // formatando o objeto para armazenar no bd
+        const invoiceInfo = {
+          id: response.id,
+          code: response.code,
+          status: response.status,
+          companyName: data.companyName,
+          document: data.cnpj || data.document,
+          amount: data.amount,
+          dueDate: data.dueDate,
+          barcodeNumber: data.barcodeNumber,
+          description: data.description,
+          junoBilletDetails: response.billetDetails
+        }
+
+        if (userInvoices) {
+          await UserInvoice.create({ invoiceInfo: invoiceInfo, userAccountId: loggedUserId })
+          res.status(200).send(invoiceInfo)
+        }
+      }
+    } catch (err) {
+      sentryError(err);
+      console.log(err)
+      return res.status(400).send(err);
+    }
+  },
+
+
+  //CARD PAYMENT (INSERT CREDITS)
+  cardPayment: async (req, res) => {
+    try {
+      // FINDING COLLECTIONS 
+      const userSession = await MySession.find({})// puxando session do usuario 
+      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+
+      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+      const loggedUserId = userModel._id //puxando id do usuario logado
+
+      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+
+      //  ACTIONS
+      const { chargeId } = req.body;
+      console.log(chargeId)
+      const userInvoice = await UserInvoice.findOne({ "invoiceInfo.id": chargeId }) //invoice do usuario
+      const invoiceChargeId = userInvoice.invoiceInfo.id //identificador de cobrança
+
+
+      if (userModel) {
+        if (invoiceChargeId) {
+          const data = {
+            chargeId: invoiceChargeId,
+            billing: {
+              email: userModel.email,
+              address: userModel.address,
+              delayed: false,
+            },
+            creditCardDetails: {
+              creditCardId: userAccountModel.cardToken.creditCardId,
+            }
+          }
+          const response = await payment.cardPayment(data, resourcetoken)
+          const paid = await UserInvoice.findOneAndUpdate({ "invoiceInfo.id": chargeId }, { paymentInfo: response, "invoiceInfo.status": "PAID" });
+
+          return res.status(200).send(paid)
+        } else {
+          return res.status(400).send({ message: 'Cobrança não existe' })
+        }
+
+      } else {
+        return res.status(400).send({ message: 'Usuario não existe.' })
+      }
+
+    } catch (err) {
+      sentryError(err);
+      return res.status(err.status || 400).send(err.response);
+    }
+  },
+
+  //USER BANK ACCOUNT
+  bankAccount: async (req, res) => {
     const data = req.body
+    const authorization = req.headers.authorization.split(" ")
+    const token = authorization[1]
+    try {
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
+      const userSessionToken = userSession.session.token //token do usuario logado
+      const userSessionEmail = userSession.session.userEmail //email do usuario logado
+      if (!(userSessionToken == token)) { //verificando de usuario pelo token
+        console.log('Usuario Não Identificado')
+      } else {
+        console.log('Usuario Identificado')
+
+        const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+        const loggedUserId = userModel._id //puxando id do usuario logado
+
+        const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+
+        //  ACTIONS
+        const { bankAccount } = req.body;
+        console.log(bankAccount)
+
+        if (userModel) {
+          console.log('usermodel existe')
+          const userBankAccount = await UserAccount.findOneAndUpdate({ "userId": loggedUserId }, { bankAccount: bankAccount });
+
+          return res.status(200).send(userBankAccount)
+        } else {
+          return res.status(400).send({ message: 'Usuario não existe.' })
+        }
+      }
+    } catch (err) {
+      sentryError(err);
+      return res.status(err.status || 400).send({ message: err.message });
+    }
+  },
+
+
+  //BILL PAYMENT
+  billPayment: async (req, res) => {
+    try {
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.find({})// puxando session do usuario 
+      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+
+      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+      const loggedUserId = userModel._id //puxando id do usuario logado
+
+      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+      //  ACTION
+
+      if (loggedUserId) {
+        // console.log(req.body)
+        const response = await payment.billPayment(req.body, resourcetoken);
+        // if (UserInvoice.find({ userAccountId: userModel._id })) {
+        //   const invoice = await UserInvoice.create({ invoiceInfo: response, userAccountId: userModel._id })
+
+        res.status(200).send(response)
+      } else {
+        console.log('usuario sem registro')
+        return res.status(400).send({ message: "Usuário não tem registro." });
+      }
+
+    } catch (err) {
+      sentryError(err);
+      // console.log(err.response.data)
+      return res.status(err.status || 400).send(err.response.creditCardDetails);
+    }
+  },
+
+
+  //SALVAR CARTÃO - (TOKENIZAR)
+  saveCard: async (req, res) => {
+    const creditCardHash = req.body
     const authorization = req.headers.authorization.split(" ")
     const token = authorization[1]
     try {
@@ -158,157 +392,16 @@ module.exports = {
         const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
         const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
 
-        //  ACTION
-        if (loggedUserId) {
-          const response = await payment.charge(data, resourcetoken);
+        //  ACTIONS
+        const response = await payment.cardTokenize(creditCardHash, resourcetoken)
+        await UserAccount.findOneAndUpdate({ userId: loggedUserId, cardToken: response })
 
-          if (UserInvoice.find({ userAccountId: userModel._id })) {
-            const invoice = await UserInvoice.create({ invoiceInfo: response, userAccountId: userModel._id })
+        console.log(response)
+        return res.status(200).send({ message: "Cartão cadastrado com sucesso!" })
 
-            res.status(200).send(invoice)
-          }
-        } else {
-          return res.status(400).send({ message: "Usuário não tem registro." });
-        }
       }
     } catch (err) {
-      sentryError(err);
-      return res.status(400).send({ message: err });
-    }
-  },
-
-
-  //CARD PAYMENT (INSERT CREDITS)
-  cardPayment: async (req, res) => {
-    try {
-      //FINDING COLLECTIONS 
-      const userSession = await MySession.find({})// puxando session do usuario 
-      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-      const loggedUserId = userModel._id //puxando id do usuario logado
-
-      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-      //  ACTIONS
-      // const { email } = req.body.billing;
-      // const userModel = await User.findOne({ email })
-      const { chargeId } = req.body;
-      const userInvoice = await UserInvoice.findOne({ "invoiceInfo.id": chargeId }) //invoice do usuario
-      const invoiceChargeId = userInvoice.invoiceInfo.id //identificador de cobrança
-
-
-      if (userModel) {
-        if (invoiceChargeId) {
-          const response = await payment.cardPayment(req.body, resourcetoken)
-          const paid = await UserInvoice.findOneAndUpdate({ "invoiceInfo.id": chargeId }, { paymentInfo: response });
-
-          return res.status(200).send(paid)
-        } else {
-          return res.status(400).send({ message: 'Cobrança não existe' })
-        }
-
-      } else {
-        return res.status(400).send({ message: 'Usuario não existe.' })
-      }
-
-    } catch (err) {
-      sentryError(err);
-      return res.status(err.status || 400).send({ message: err.message });
-    }
-  },
-
-  //USER BANK ACCOUNT
-  bankAccount: async (req, res) => {
-    try {
-      //FINDING COLLECTIONS 
-      const userSession = await MySession.find({})// puxando session do usuario 
-      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-      const loggedUserId = userModel._id //puxando id do usuario logado
-
-      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-
-
-      //  ACTIONS
-      // const { email } = req.body.billing;
-      // const userModel = await User.findOne({ email })
-      const { bankAccount } = req.body;
-      console.log(bankAccount)
-
-      if (userModel) {
-        console.log('usermodel existe')
-        const userBankAccount = await UserAccount.findOneAndUpdate({ "userId": loggedUserId }, { bankAccount: bankAccount });
-
-        return res.status(200).send(userBankAccount)
-      } else {
-        return res.status(400).send({ message: 'Usuario não existe.' })
-      }
-
-    } catch (err) {
-      sentryError(err);
-      return res.status(err.status || 400).send({ message: err.message });
-    }
-  },
-
-  //BILL PAYMENT
-  billPayment: async (req, res) => {
-    try {
-      //FINDING COLLECTIONS 
-      const userSession = await MySession.find({})// puxando session do usuario 
-      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-      const loggedUserId = userModel._id //puxando id do usuario logado
-
-      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-      //  ACTION
-      // const { email } = req.body.billing;
-      // const userModel = await User.findOne({ email })
-
-      if (loggedUserId) {
-        const response = await payment.billPayment(req.body, resourcetoken);
-        console.log("chegou aqui")
-        console.log(response.data)
-
-        // if (UserInvoice.find({ userAccountId: userModel._id })) {
-        //   const invoice = await UserInvoice.create({ invoiceInfo: response, userAccountId: userModel._id })
-
-        res.status(200).send(response.data)
-      } else {
-        console.log('usuario sem registro')
-        return res.status(400).send({ message: "Usuário não tem registro." });
-      }
-
-    } catch (err) {
-      sentryError(err);
-      return res.status(400).send(err);
-    }
-  },
-
-
-  //SALVAR CARTÃO - (TOKENIZAR)
-  saveCard: async (req, res) => {
-    try {
-      //FINDING COLLECTIONS 
-      const userSession = await MySession.find({})// puxando session do usuario
-      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-      const loggedUserId = userModel._id //puxando id do usuario logado
-
-      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-      //  ACTIONS
-      // const { email } = req.body;
-      const card_token = await payment.cardTokenize(req.body, req.headers.resourcetoken)
-      // const saveCardOnUser = await User.updateOne({ email }, { ...req.body, cardHash: card_token })
-      return res.status(200).send(card_token)
-
-    } catch (err) {
-      return res.status(err.status || 400).send({ message: err.message });
+      return res.status(err.status || 400).send(err);
     }
   },
 
@@ -357,7 +450,7 @@ module.exports = {
     } catch (err) {
       sentryError(err);
       console.log(err)
-      return res.status(err.code || err.status || 400).send(err.message);
+      return res.status(err.code || err.status || 400).send(err.response.data);
     }
 
   },
@@ -438,30 +531,6 @@ module.exports = {
       return res.status(err.status || 400).send(err);
     }
   },
-
-
-  //PAGAMENTO DE CONTAS
-  // billPayment: async (req, res) => {
-  //   try {
-  //FINDING COLLECTIONS 
-  // const userSession = await MySession.find({})// puxando session do usuario 
-  //    const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
-
-  //    const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-  //    const loggedUserId = userModel._id //puxando id do usuario logado
-
-  //    const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-  //    const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-  //  ACTIONS
-  //     const body = req.body
-  //     const pix_payment = await payment.billPayment(body, resourcetoken)
-  //     console.log(pix_payment)
-  //   } catch (err) {
-  //     return res.status(err.status || 400).send({ message: err });
-  //   }
-  // },
-
-
 
 
   //PIX PAYMENT (INSERT CREDITS)

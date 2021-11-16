@@ -18,6 +18,11 @@ const UserInvoiceSchema = new mongoose.Schema({
 
   paymentInfo: {
     type: Object,
+  },
+
+  companyInfo: {
+    type: mongoose.ObjectId,
+    ref: `Company`
   }
 
 });

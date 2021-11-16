@@ -102,7 +102,7 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         },
       });
-      return res.data._embedded;
+      return res.data._embedded.charges;
     } catch (err) {
       throw err;
     }
@@ -124,17 +124,17 @@ const payment = {
   },
 
   //----> SEND CHARGE - utiliza JSON no corpo
-  charge: async (body, resourcetoken) => {
+  charge: async (obj, resourcetoken) => {
     try {
       const instance = await payment.init();
-      const res = await instance.post("charges", body, {
+      const res = await instance.post("charges", obj, {
         headers: {
           "X-Resource-Token": resourcetoken,
         },
       });
       return res.data._embedded.charges[0];
     } catch (err) {
-      throw err.response.data;
+      throw err;
     }
   },
 
@@ -162,9 +162,10 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         },
       });
-      return res.data._embedded.charges[0];
+      return res.data;
     } catch (err) {
-      throw err.response.data;
+      console.log(err.response.data)
+      throw err;
     }
   },
 
@@ -180,7 +181,7 @@ const payment = {
       console.log(res.data.payments[0]);
       return res.data.payments[0];
     } catch (err) {
-      throw err.response.data;
+      throw err;
     }
   },
 
@@ -195,7 +196,7 @@ const payment = {
       });
       return res.data;
     } catch (err) {
-      throw err.response.data;
+      throw err;
     }
   },
 
@@ -211,7 +212,7 @@ const payment = {
       console.log(res.data);
       return res.data;
     } catch (err) {
-      throw err.response.data;
+      throw err;
     }
   },
 

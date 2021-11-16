@@ -45,13 +45,9 @@ module.exports = {
   newCompany: async (req, res) => {
     try {
       const { company } = req.body
-      // console.log(company)
+      console.log(company)
 
       if (company.cnpj.length != 14) { return res.status(403).send({ message: "CNPJ Inválido" }) }
-
-      const companyModel = await Company.findOne({ cnpj: company.cnpj })
-
-      if (companyModel) { return res.status(403).send({ message: "Já existe uma empresa com esse cnpj" }) }
 
       const response = await Company.create(company);
 
