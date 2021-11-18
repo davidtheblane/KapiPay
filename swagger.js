@@ -2,26 +2,28 @@ const swaggerAutogen = require('swagger-autogen')({ openapi: '3.0.0' })
 
 const doc = {
   info: {
-    version: "1.0.0",
     title: "Kapipay API",
-    description: "Simple API Documentation."
+    version: "1.0.0",
+    description: "Simple API Documentation.",
+    termsOfService: "http://develop.davibernardo.xyz/terms",
+    contact: {
+      email: "davi.bernardo@linkapi.com.br"
+    },
   },
-  host: "localhost:5050",
-  basePath: "/",
-  schemes: ['http', 'https'],
+  externalDocs: {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  servers: [{ url: "http://localhost:5050" }],
   consumes: ['application/json'],
   produces: ['application/json'],
   tags: [
     {
       "name": "Authorization",
-      "description": "Authorization to use API"
+      "description": "Authorization actions"
     },
     {
-      "name": "Login & Register",
-      "description": "Login Actions"
-    },
-    {
-      "name": "Account",
+      "name": "Digital Account Actions",
       "description": "Account Actions"
     },
     {
@@ -31,6 +33,10 @@ const doc = {
     {
       "name": "Invoice",
       "description": "Invoice Actions"
+    },
+    {
+      "name": "Others",
+      "description": "others routes"
     }
   ],
   securityDefinitions: {
@@ -45,29 +51,27 @@ const doc = {
       father: "Simon Doe",
       mother: "Marie Doe"
     },
-    User: {
-      name: "Jhon Doe",
-      age: 29,
-      parents: {
-        $ref: '#/definitions/Parents'
-      },
-      diplomas: [
-        {
-          school: "XYZ University",
-          year: 2020,
-          completed: true,
-          internship: {
-            hours: 290,
-            location: "XYZ Company"
-          }
-        }
-      ]
-    },
+
     AddUser: {
-      $name: "Jhon Doe",
-      $age: 29,
-      about: ""
-    }
+      name: "João do Caminhão",
+      email: "joaodocaminhao@uol.com.br",
+      password: "soujoao123"
+    },
+    UserCreated: {
+      name: "João do Caminhão",
+      email: "joaodocaminhao@uol.com.br",
+      id: "string",
+      createdAt: "string",
+      token: "string"
+    },
+    UserProfile: {
+      name: "João do Caminhão",
+      email: "joaodocaminhao@uol.com.br",
+      id: "numericaltoken",
+      createdAt: "date",
+      token: "Bearer token"
+    },
+
   }
 }
 

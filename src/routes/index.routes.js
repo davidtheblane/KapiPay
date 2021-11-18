@@ -10,6 +10,7 @@ const authMiddleware = require('../middlewares/auth');
 //Open Routes
 router.get("/", function rootHandler(req, res) {
   res.end("Hello world!");
+  // #swagger.ignore = true
 });
 router.get('/cep/:id', cepController.getCep)
 
@@ -23,8 +24,8 @@ router.post('/reset_password', authController.passwordReset)
 // Above HERE, all routes are authenticated
 router.use(authMiddleware)
 //Users
-router.get('/users', userController.listUsers)
-router.get('/users/:id', userController.getUser)
+// router.get('/users', userController.listUsers) //admin
+// router.get('/users/:id', userController.getUser) //admin
 router.get('/user/data', userController.userData)
 
 

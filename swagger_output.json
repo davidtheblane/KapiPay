@@ -1,29 +1,29 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "version": "1.0.0",
     "title": "Kapipay API",
-    "description": "Simple API Documentation."
+    "version": "1.0.0",
+    "description": "Simple API Documentation.",
+    "termsOfService": "http://develop.davibernardo.xyz/terms",
+    "contact": {
+      "email": "davi.bernardo@linkapi.com.br"
+    }
   },
   "servers": [
     {
-      "url": "http://localhost:5050/"
+      "url": "http://localhost:5050"
     },
     {
-      "url": "https://localhost:5050/"
+      "url": "http://localhost:3000/"
     }
   ],
   "tags": [
     {
       "name": "Authorization",
-      "description": "Authorization to use API"
+      "description": "Authorization actions"
     },
     {
-      "name": "Login",
-      "description": "Login Actions"
-    },
-    {
-      "name": "Account",
+      "name": "Digital Account Actions",
       "description": "Account Actions"
     },
     {
@@ -33,17 +33,13 @@
     {
       "name": "Invoice",
       "description": "Invoice Actions"
+    },
+    {
+      "name": "Others",
+      "description": "others routes"
     }
   ],
   "paths": {
-    "/": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {}
-      }
-    },
     "/cep/{id}": {
       "get": {
         "tags": [],
@@ -69,29 +65,39 @@
     "/register": {
       "post": {
         "tags": [
-          "Login"
+          "Authorization"
         ],
-        "description": "Endpoint para registrar na aplicação.",
+        "summary": "Create a user to login in API",
+        "description": "",
         "parameters": [
           {
             "name": "obj",
             "in": "body",
+            "description": "Name, Email and Password.",
+            "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                }
-              }
+              "$ref": "#/components/schemas/AddUser"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "New user created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserCreated"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserCreated"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Something goes wrong"
           }
         }
       }
@@ -99,9 +105,10 @@
     "/login": {
       "post": {
         "tags": [
-          "Login"
+          "Authorization"
         ],
-        "description": "Endpoint para logar na aplicação.",
+        "summary": "Login in application.",
+        "description": "",
         "parameters": [
           {
             "name": "email",
@@ -128,21 +135,17 @@
     "/forgot_password": {
       "post": {
         "tags": [
-          "Login"
+          "Authorization"
         ],
-        "description": "Endpoint para recuperar senha.",
+        "summary": "Endpoint to recover password.",
+        "description": "",
         "parameters": [
           {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "email",
+            "description": "User Email.",
+            "type": "string",
+            "required": true,
+            "in": "body"
           }
         ],
         "responses": {
@@ -158,27 +161,31 @@
     "/reset_password": {
       "post": {
         "tags": [
-          "Login"
+          "Authorization"
         ],
-        "description": "Endpoint para trocar a senha.",
+        "summary": "Endpoint to change password.",
+        "description": "",
         "parameters": [
           {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                },
-                "token": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "email",
+            "description": "User Email.",
+            "type": "string",
+            "required": true,
+            "in": "body"
+          },
+          {
+            "name": "token",
+            "description": "Token received by email.",
+            "type": "string",
+            "required": true,
+            "in": "body"
+          },
+          {
+            "name": "password",
+            "description": "A new user password.",
+            "type": "string",
+            "required": true,
+            "in": "body"
           }
         ],
         "responses": {
@@ -191,7 +198,7 @@
         }
       }
     },
-    "/users": {
+    "/user/data": {
       "get": {
         "tags": [],
         "description": "",
@@ -209,7 +216,40 @@
         }
       }
     },
-    "/users/{id}": {
+    "/account/balance": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/account/invoices": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/account/invoices/{id}": {
       "get": {
         "tags": [],
         "description": "",
@@ -234,22 +274,7 @@
         }
       }
     },
-    "/balance": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/charges": {
+    "/account/status": {
       "get": {
         "tags": [],
         "description": "",
@@ -267,32 +292,7 @@
         }
       }
     },
-    "/charges/{id}": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/status": {
+    "/account/documents": {
       "get": {
         "tags": [],
         "description": "",
@@ -310,7 +310,7 @@
         }
       }
     },
-    "/documents": {
+    "/account/company-type": {
       "get": {
         "tags": [],
         "description": "",
@@ -328,7 +328,7 @@
         }
       }
     },
-    "/company": {
+    "/account/company": {
       "get": {
         "tags": [],
         "description": "",
@@ -378,7 +378,7 @@
         }
       }
     },
-    "/create": {
+    "/account/create": {
       "post": {
         "tags": [],
         "description": "",
@@ -409,34 +409,22 @@
         }
       }
     },
-    "/charge": {
-      "post": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/documents/{id}": {
+    "/account/invoice": {
       "post": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -452,7 +440,44 @@
         }
       }
     },
-    "/payment_card": {
+    "/account/documents/{id}": {
+      "post": {
+        "tags": [],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "formData": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/account/payment_card": {
       "post": {
         "tags": [],
         "description": "",
@@ -483,7 +508,7 @@
         }
       }
     },
-    "/save_card": {
+    "/account/save_card": {
       "post": {
         "tags": [],
         "description": "",
@@ -501,7 +526,7 @@
         }
       }
     },
-    "/bank_account": {
+    "/account/bank_account": {
       "post": {
         "tags": [],
         "description": "",
@@ -532,7 +557,7 @@
         }
       }
     },
-    "/bill_payment": {
+    "/account/bill_payment": {
       "post": {
         "tags": [],
         "description": "",
@@ -564,55 +589,9 @@
             "type": "string",
             "example": "Marie Doe"
           }
-        }
-      },
-      "User": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Jhon Doe"
-          },
-          "age": {
-            "type": "number",
-            "example": 29
-          },
-          "parents": {
-            "$ref": "#/components/schemas/Parents"
-          },
-          "diplomas": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "school": {
-                  "type": "string",
-                  "example": "XYZ University"
-                },
-                "year": {
-                  "type": "number",
-                  "example": 2020
-                },
-                "completed": {
-                  "type": "boolean",
-                  "example": true
-                },
-                "internship": {
-                  "type": "object",
-                  "properties": {
-                    "hours": {
-                      "type": "number",
-                      "example": 290
-                    },
-                    "location": {
-                      "type": "string",
-                      "example": "XYZ Company"
-                    }
-                  }
-                }
-              }
-            }
-          }
+        },
+        "xml": {
+          "name": "Parents"
         }
       },
       "AddUser": {
@@ -620,30 +599,88 @@
         "properties": {
           "name": {
             "type": "string",
-            "example": "Jhon Doe"
+            "example": "João do Caminhão"
           },
-          "age": {
-            "type": "number",
-            "example": 29
-          },
-          "about": {
+          "email": {
             "type": "string",
-            "example": ""
+            "example": "joaodocaminhao@uol.com.br"
+          },
+          "password": {
+            "type": "string",
+            "example": "soujoao123"
           }
         },
-        "required": [
-          "name",
-          "age"
-        ]
+        "xml": {
+          "name": "AddUser"
+        }
+      },
+      "UserCreated": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "João do Caminhão"
+          },
+          "email": {
+            "type": "string",
+            "example": "joaodocaminhao@uol.com.br"
+          },
+          "id": {
+            "type": "string",
+            "example": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "string"
+          },
+          "token": {
+            "type": "string",
+            "example": "string"
+          }
+        },
+        "xml": {
+          "name": "UserCreated"
+        }
+      },
+      "UserProfile": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "João do Caminhão"
+          },
+          "email": {
+            "type": "string",
+            "example": "joaodocaminhao@uol.com.br"
+          },
+          "id": {
+            "type": "string",
+            "example": "numericaltoken"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "date"
+          },
+          "token": {
+            "type": "string",
+            "example": "Bearer token"
+          }
+        },
+        "xml": {
+          "name": "UserProfile"
+        }
       }
     },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "bearerFormat": "JWT",
-        "description": "any description..."
+        "bearerFormat": "JWT"
       }
     }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
   }
 }

@@ -50,6 +50,7 @@ module.exports = {
       // const userSession = await MySession.find({ "[0].session": token })// puxando session do usuario 
       const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
       const userSessionToken = userSession.session.token //token do usuario logado
+      console.log(userSessionToken)
       const userSessionEmail = userSession.session.userEmail //email do usuario logado
       if (!(userSessionToken == token)) { //verificando de usuario pelo token
         console.log('Usuario Não Identificado')
@@ -73,55 +74,6 @@ module.exports = {
       return res.status(err.status || 400).send({ message: "err.message" });
     }
   },
-
-  //LIST CHARGES
-  // listCharges: async (req, res) => {
-  //   const authorization = req.headers.authorization.split(" ")
-  //   const token = authorization[1]
-  //   try {
-  //     //FINDING COLLECTIONS 
-  //     const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
-  //     const userSessionToken = userSession.session.token //token do usuario logado
-  //     const userSessionEmail = userSession.session.userEmail //email do usuario logado
-  //     if (!(userSessionToken == token)) { //verificando de usuario pelo token
-  //       console.log('Usuario Não Identificado')
-  //     } else {
-  //       console.log('Usuario Identificado')
-
-  //       const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-  //       const loggedUserId = userModel._id //puxando id do usuario logado
-
-  //       const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-  //       const userInvoices = await UserInvoice.find({ userAccountId: loggedUserId })
-  //       const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-
-  //       //ACTION
-  //       const response = await payment.listCharges(resourcetoken);
-
-  //       const charges = response.map(item => {
-  //         let charge = {
-  //           id: item.id,
-  //           code: item.code,
-  //           status: item.status,
-  //           junoBilletDetails: item.billetDetails,
-  //           payments: item.payments
-  //         }
-  //         return charge
-  //       })
-  //       // console.log(charges[0])
-
-  //       // const invoicesUpdated = await UserInvoice.find({ "invoiceInfo": charges })
-  //       // console.log("invoices", invoicesUpdated)
-
-  //       return res.status(200).send(charges)
-  //     }
-
-
-  //   } catch (err) {
-  //     console.log(err)
-  //     return res.status(err.status || 400).send(err);
-  //   }
-  // },
 
   listInvoices: async (req, res) => {
     const authorization = req.headers.authorization.split(" ")
@@ -152,7 +104,6 @@ module.exports = {
     }
   },
 
-
   //LIST CHARGE by Charge Id
   invoiceById: async (req, res) => {
     try {
@@ -173,7 +124,6 @@ module.exports = {
       return res.status(err.status || 400).send({ message: err.message });
     }
   },
-
 
   //SEND CHARGE
   createInvoice: async (req, res) => {
@@ -244,7 +194,6 @@ module.exports = {
       return res.status(400).send(err);
     }
   },
-
 
   //CARD PAYMENT (INSERT CREDITS)
   cardPayment: async (req, res) => {
@@ -336,7 +285,6 @@ module.exports = {
     }
   },
 
-
   //BILL PAYMENT
   billPayment: async (req, res) => {
     try {
@@ -369,7 +317,6 @@ module.exports = {
       return res.status(err.status || 400).send(err.response.creditCardDetails);
     }
   },
-
 
   //SALVAR CARTÃO - (TOKENIZAR)
   saveCard: async (req, res) => {
@@ -404,7 +351,6 @@ module.exports = {
       return res.status(err.status || 400).send(err);
     }
   },
-
 
   //CREATE DIGITAL ACCOUNT
   createAccount: async (req, res) => {
@@ -455,7 +401,6 @@ module.exports = {
 
   },
 
-
   //LIST PENDING DOCUMENTS
   listPendingDocuments: async (req, res) => {
     const authorization = req.headers.authorization.split(" ")
@@ -488,12 +433,11 @@ module.exports = {
     }
   },
 
-
   //SEND DOCUMENTS
   sendDocuments: async (req, res) => {
     const authorization = req.headers.authorization.split(" ")
     const token = authorization[1]
-
+    console.log(req.body.formData)
     try {
       //FINDING COLLECTIONS
       const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario
@@ -532,9 +476,10 @@ module.exports = {
     }
   },
 
-
   //PIX PAYMENT (INSERT CREDITS)
   pixPayment: async (req, res) => {
+    const authorization = req.headers.authorization.split(" ")
+    const token = authorization[1]
     try {
       const body = req.body
       const pix_payment = await payment.pixPayment(body)
@@ -544,6 +489,5 @@ module.exports = {
       return res.status(err.status || 400).send({ message: err.message });
     }
   },
-
 
 }
