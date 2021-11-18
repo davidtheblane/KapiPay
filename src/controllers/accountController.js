@@ -146,7 +146,6 @@ module.exports = {
         const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
         const userInvoices = await UserInvoice.find({ userAccountId: loggedUserId })
 
-
         const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
 
         // ACTION
@@ -185,8 +184,9 @@ module.exports = {
 
         if (userInvoices) {
           await UserInvoice.create({ invoiceInfo: invoiceInfo, userAccountId: loggedUserId })
-          res.status(200).send(invoiceInfo)
         }
+        console.log(invoiceInfo)
+        res.status(200).send(invoiceInfo)
       }
     } catch (err) {
       sentryError(err);
@@ -210,7 +210,6 @@ module.exports = {
 
       //  ACTIONS
       const { chargeId } = req.body;
-      console.log(chargeId)
       const userInvoice = await UserInvoice.findOne({ "invoiceInfo.id": chargeId }) //invoice do usuario
       const invoiceChargeId = userInvoice.invoiceInfo.id //identificador de cobrança
 
@@ -231,6 +230,7 @@ module.exports = {
           const response = await payment.cardPayment(data, resourcetoken)
           const paid = await UserInvoice.findOneAndUpdate({ "invoiceInfo.id": chargeId }, { paymentInfo: response, "invoiceInfo.status": "PAID" });
 
+          console.log(paid)
           return res.status(200).send(paid)
         } else {
           return res.status(400).send({ message: 'Cobrança não existe' })
@@ -242,7 +242,8 @@ module.exports = {
 
     } catch (err) {
       sentryError(err);
-      return res.status(err.status || 400).send(err.response);
+      console.log(err)
+      return res.status(err.status || 400).send(err);
     }
   },
 
