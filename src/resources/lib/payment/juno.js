@@ -162,9 +162,11 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         },
       });
-      return res.data;
+      console.log(res)
+      return res;
+
     } catch (err) {
-      console.log(err.response.data)
+      console.log(err)
       throw err;
     }
   },
@@ -178,7 +180,7 @@ const payment = {
           "X-Resource-Token": resourcetoken,
         },
       });
-      console.log(res.data.payments[0]);
+      // console.log(res.data.payments[0]);
       return res.data.payments[0];
     } catch (err) {
       throw err;
@@ -266,16 +268,5 @@ const payment = {
     }
   },
 
-  // // ----> PAGAMENTO DE CONTAS
-  // createAccount: async (body, resourcetoken) => {
-  //   const instance = await payment.init();
-  //   const res = await instance.post("bill-payments", body, {
-  //     headers: {
-  //       "X-Resource-Token": resourcetoken,
-  //     },
-  //   });
-  //   console.log(res.data);
-  //   return res.data;
-  // },
 };
 module.exports = payment;

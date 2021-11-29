@@ -19,7 +19,6 @@ app.use(Sentry.Handlers.requestHandler());
 
 app.use(upload.any());
 app.use(express.static('public'));
-app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.errorHandler());
 app.use(cors());
 app.use(morgan('dev'));

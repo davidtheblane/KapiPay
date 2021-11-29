@@ -47,6 +47,8 @@ router.post('/account/save_card', accountController.saveCard)
 router.post('/account/bank_account', accountController.bankAccount)
 router.post('/account/bill_payment', accountController.billPayment)
 router.post('/account/company', companyController.newCompany)
+router.post('/account/sms', accountController.sendSMS)
+
 // router.post('/account/company/type', companyController.newCompanyType)
 
 
