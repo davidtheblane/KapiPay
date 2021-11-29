@@ -10,7 +10,6 @@ const authMiddleware = require('../middlewares/auth');
 //Open Routes
 router.get("/", function rootHandler(req, res) {
   res.end("Hello world!");
-  // #swagger.ignore = true
 });
 router.get('/cep/:id', cepController.getCep)
 

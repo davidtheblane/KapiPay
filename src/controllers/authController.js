@@ -26,25 +26,6 @@ module.exports = {
 
   //Registrar usuário
   createUser: async (req, res) => {
-    /* swagger doc
-    #swagger.tags = ['Authorization']
-    #swagger.summary = "Create a user to login in API"
-   
-    #swagger.parameters['obj'] = {
-           in: 'body',
-           description: 'Name, Email and Password.',
-           required: true,
-           schema: { $ref: "#/definitions/AddUser" }
-   }
-
-    #swagger.responses[200] = { 
-      schema: { "$ref": "#/definitions/UserCreated" },
-      description: "New user created." }
-
-    #swagger.responses[400] = { description: 'Something goes wrong' }
-    */
-
-
     const { email } = req.body;
     try {
       //verifica se já tem algum user com o mesmo email
@@ -67,11 +48,6 @@ module.exports = {
 
   //Login Usuário
   authUser: async (req, res) => {
-    // #swagger.tags = ['Authorization']
-    // #swagger.summary = 'Login in application.'
-    // #swagger.parameters['email'] = { description: 'User Email.', type: 'string', required: true, in:'body' }
-    // #swagger.parameters['password'] = { description: 'User password.', type: 'string', required: true, in:'body' }
-
     try {
       const { email, password } = req.body;
 
@@ -94,11 +70,6 @@ module.exports = {
 
   //Forgot password
   forgotPassword: async (req, res) => {
-    //  #swagger.tags = ['Authorization']
-    //  #swagger.summary = 'Endpoint to recover password.'
-    //  #swagger.parameters['email'] = { description: 'User Email.', type: 'string', required: true, in:'body' }
-
-
     try {
       const { email } = req.body;
       const user = await User.findOne({ email });
@@ -155,14 +126,6 @@ module.exports = {
 
   //Reset password
   passwordReset: async (req, res) => {
-    // #swagger.tags = ['Authorization']
-    // #swagger.summary = 'Endpoint to change password.'
-    // #swagger.parameters['email'] = { description: 'User Email.', type: 'string', required: true, in:'body' }
-    // #swagger.parameters['token'] = { description: 'Token received by email.', type: 'string', required: true, in:'body' }
-    // #swagger.parameters['password'] = { description: 'A new user password.', type: 'string', required: true, in:'body' }
-
-
-
     try {
       const { email, token, password } = req.body;
       const user = await User.findOne({ email })
