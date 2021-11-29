@@ -4,6 +4,7 @@ const User = require('../models/user');
 const UserAccount = require('../models/userAccount');
 const UserInvoice = require('../models/userInvoice');
 const MySession = require('../models/session');
+const sms = require('../resources/lib/sendSMS/zenvia.service');
 
 
 module.exports = {
@@ -197,53 +198,83 @@ module.exports = {
 
   //CARD PAYMENT (INSERT CREDITS)
   cardPayment: async (req, res) => {
+    const authorization = req.headers.authorization.split(" ")
+    const token = authorization[1]
     try {
-      // FINDING COLLECTIONS 
-      const userSession = await MySession.find({})// puxando session do usuario 
-      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+      //FINDING COLLECTIONS 
+      const userSession = await MySession.findOne({ "session.token": token })// puxando session do usuario 
+      const userSessionToken = userSession.session.token //token do usuario logado
+      const userSessionEmail = userSession.session.userEmail //email do usuario logado
 
-      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
-      const loggedUserId = userModel._id //puxando id do usuario logado
-
-      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
-      const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
-
-      //  ACTIONS
-      const { chargeId } = req.body;
-      const userInvoice = await UserInvoice.findOne({ "invoiceInfo.id": chargeId }) //invoice do usuario
-      const invoiceChargeId = userInvoice.invoiceInfo.id //identificador de cobrança
-
-
-      if (userModel) {
-        if (invoiceChargeId) {
-          const data = {
-            chargeId: invoiceChargeId,
-            billing: {
-              email: userModel.email,
-              address: userModel.address,
-              delayed: false,
-            },
-            creditCardDetails: {
-              creditCardId: userAccountModel.cardToken.creditCardId,
-            }
-          }
-          const response = await payment.cardPayment(data, resourcetoken)
-          const paid = await UserInvoice.findOneAndUpdate({ "invoiceInfo.id": chargeId }, { paymentInfo: response, "invoiceInfo.status": "PAID" });
-
-          console.log(paid)
-          return res.status(200).send(paid)
-        } else {
-          return res.status(400).send({ message: 'Cobrança não existe' })
-        }
-
+      if (!(userSessionToken == token)) { //verificando de usuario pelo token
+        console.log('Usuario Não Identificado')
       } else {
-        return res.status(400).send({ message: 'Usuario não existe.' })
+        console.log('Usuario Identificado')
+
+        const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+        const loggedUserId = userModel._id //puxando id do usuario logado
+
+        const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+        const resourcetoken = userAccountModel.junoAccountCreateResponse.resourceToken //puxando resourcetoken do usuario
+
+        //  ACTIONS
+        const { chargeId } = req.body;
+        const userInvoice = await UserInvoice.findOne({ "invoiceInfo.id": chargeId }) //invoice do usuario
+        const invoiceChargeId = userInvoice.invoiceInfo.id //identificador de cobrança
+
+
+        if (userModel) {
+          if (invoiceChargeId) {
+            const data = {
+              chargeId: invoiceChargeId,
+              billing: {
+                email: userModel.email,
+                address: userModel.address,
+                delayed: false,
+              },
+              creditCardDetails: {
+                creditCardId: userAccountModel.cardToken.creditCardId,
+              }
+            }
+            const response = await payment.cardPayment(data, resourcetoken)
+            const paid = await UserInvoice.findOneAndUpdate({ "invoiceInfo.id": chargeId }, { paymentInfo: response, "invoiceInfo.status": "PAID" });
+
+            //SEND SMS TO USER
+            const loggedUserPhone = userModel.phone;
+            const companyName = paid.invoiceInfo.companyName;
+            const amount = paid.invoiceInfo.amount;
+            const dueDate = paid.invoiceInfo.dueDate;
+
+
+            const message = {
+              "from": "lace-trail",
+              "to": `${loggedUserPhone}`,
+              "contents": [
+                {
+                  "type": "text",
+                  "text": `Olá é a Kapipay... Acabamos de pagar sua conta: Empresa: ${companyName} Valor:  R$ ${amount} Vencimento: ${dueDate}`
+                }
+              ]
+            }
+            const messageSend = await sms.sendMessage(message)
+            console.log(messageSend)
+
+            console.log(paid)
+            return res.status(200).send(paid)
+          } else {
+            return res.status(400).send({ message: 'Cobrança não existe' })
+          }
+
+        } else {
+          return res.status(400).send({ message: 'Usuario não existe.' })
+        }
       }
+
 
     } catch (err) {
       sentryError(err);
-      console.log(err)
-      return res.status(err.status || 400).send(err);
+      console.log(err.response.data)
+      return res.status(err.status || 400).send(err.response.data);
     }
   },
 
@@ -289,6 +320,9 @@ module.exports = {
   //BILL PAYMENT
   billPayment: async (req, res) => {
     try {
+      const authorization = req.headers.authorization.split(" ")
+      const token = authorization[1]
+
       //FINDING COLLECTIONS 
       const userSession = await MySession.find({})// puxando session do usuario 
       const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
@@ -309,13 +343,13 @@ module.exports = {
         res.status(200).send(response)
       } else {
         console.log('usuario sem registro')
-        return res.status(400).send({ message: "Usuário não tem registro." });
+        return res.status(400).send(response);
       }
 
     } catch (err) {
       sentryError(err);
-      // console.log(err.response.data)
-      return res.status(err.status || 400).send(err.response.creditCardDetails);
+      // console.log(err)
+      return res.status(err.status || 400).send(err.response);
     }
   },
 
@@ -457,8 +491,6 @@ module.exports = {
 
         //  ACTIONS
         const file = req.body.formData;
-        // console.log(file)
-        // const file = req.files // envio do Insomnia
         // acessando o id do doc correto no banco de dados
         if (req.params.id == 'doc') {
           let id = userAccountModel.docId
@@ -488,6 +520,36 @@ module.exports = {
     } catch (err) {
       console.log(err.message || err.stack)
       return res.status(err.status || 400).send({ message: err.message });
+    }
+  },
+
+  sendSMS: async (req, res) => {
+    const obj = req.body
+    try {
+      // FINDING COLLECTIONS 
+      const userSession = await MySession.find({})// puxando session do usuario 
+      const userSessionEmail = userSession[0].session.userEmail //email do usuario logado
+      const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
+      const loggedUserId = userModel._id //puxando id do usuario logado
+
+      const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+
+      //  ACTIONS
+
+      if (userModel) {
+
+        const response = await sms.sendMessage(obj)
+        console.log(response)
+        return res.status(200).send(response)
+
+      } else {
+        return res.status(400).send({ message: 'Usuario não existe.' })
+      }
+
+    } catch (err) {
+      sentryError(err);
+      console.log(err)
+      return res.status(err.status || 400).send(err.response.data);
     }
   },
 
