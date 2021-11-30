@@ -245,19 +245,22 @@ module.exports = {
             const amount = paid.invoiceInfo.amount;
             const dueDate = paid.invoiceInfo.dueDate;
 
-
             const message = {
               "from": "lace-trail",
               "to": `${loggedUserPhone}`,
               "contents": [
                 {
                   "type": "text",
-                  "text": `Olá é a Kapipay... Acabamos de pagar sua conta: Empresa: ${companyName} Valor:  R$ ${amount} Vencimento: ${dueDate}`
+                  "text": `Olá é da Kapipay... Acabamos de pagar sua conta. Empresa: ${companyName} Valor: R$${amount} Vencimento: ${dueDate}`
                 }
               ]
             }
             const messageSend = await sms.sendMessage(message)
-            console.log(messageSend)
+            if (messageSend) {
+              console.log("SMS Enviado", messageSend)
+            } else {
+              console.log('mensagem não enviada')
+            }
 
             console.log(paid)
             return res.status(200).send(paid)
