@@ -84,7 +84,41 @@ module.exports = {
           ]
           return res.status(200).send(userProfile)
 
-        } else {
+        }
+        else if (!(userAccountModel.cardToken)) {
+          console.log("Usuário nao tem cartão cadastrado")
+          const userProfile = [
+            {
+              name: userModel.name,
+              email: userModel.email,
+              birthDate: userModel.birthDate,
+              document: userModel.document,
+              phone: userModel.phone,
+              monthlyIncomeOrRevenue: userModel.monthlyIncomeOrRevenue,
+            },
+
+            {
+              street: userModel.address.street,
+              number: userModel.address.number,
+              complement: userModel.address.complement,
+              neighborhood: userModel.address.neighborhood,
+              city: userModel.address.city,
+              state: userModel.address.state,
+              postCode: userModel.address.postCode,
+            },
+
+            {
+              bankNumber: userAccountModel.bankAccount.bankNumber,
+              agencyNumber: userAccountModel.bankAccount.agencyNumber,
+              accountNumber: userAccountModel.bankAccount.accountNumber,
+              accountComplementNumber: userAccountModel.bankAccount.accountComplementNumber,
+              accountType: userAccountModel.bankAccount.accountType,
+            },
+          ]
+          return res.status(200).send(userProfile)
+
+        }
+        else {
           console.log("Usuário tem conta digital criada")
           const userProfile = [
             {

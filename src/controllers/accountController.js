@@ -295,25 +295,40 @@ module.exports = {
 
         const userModel = await User.findOne({ email: userSessionEmail }) //puxando registro do usuario logado
         const loggedUserId = userModel._id //puxando id do usuario logado
+        // console.log("usuario logado", loggedUserId)
 
         const userAccountModel = await UserAccount.findOne({ userId: loggedUserId }) // puxando conta digital do usuario logado
+        // const userAccountId = userAccountModel.userId;
+        // console.log("conta de usuario logado", userAccountModel)
 
         //  ACTIONS
-        const { bankAccount } = req.body;
-        console.log(bankAccount)
-
-        if (userModel) {
-          console.log('usermodel existe')
-          const userBankAccount = await UserAccount.findOneAndUpdate({ "userId": loggedUserId }, { bankAccount: bankAccount });
-
-          return res.status(200).send(userBankAccount)
-        } else {
-          return res.status(400).send({ message: 'Usuario não existe.' })
+        const newBankAccount = {
+          bankNumber: data.bankNumber,
+          agencyNumber: data.agencyNumber,
+          accountNumber: data.accountNumber,
+          accountComplementNumber: data.accountComplementNumber,
+          accountType: "CHECKING",
+          accountHolder: {
+            name: userModel.name,
+            document: userModel.document
+          }
         }
+
+        if (userAccountModel) {
+          await UserAccount.updateOne({ userId: loggedUserId }, { bankAccount: newBankAccount })
+
+          console.log("dados batem")
+        } else {
+          console.log("Dados da conta não bateram")
+        }
+
       }
+      return res.status(200).send('tudo certo')
+
     } catch (err) {
       sentryError(err);
-      return res.status(err.status || 400).send({ message: err.message });
+      console.log(err)
+      return res.status(err.status || 400).send(err.response);
     }
   },
 
@@ -376,7 +391,14 @@ module.exports = {
 
         //  ACTIONS
         const response = await payment.cardTokenize(creditCardHash, resourcetoken)
-        await UserAccount.findOneAndUpdate({ userId: loggedUserId, cardToken: response })
+
+        if (userAccountModel) {
+          // await UserAccount.findOneAndUpdate({ userId: loggedUserId, cardToken: response })
+          console.log('dados batem')
+          await UserAccount.updateOne({ userId: loggedUserId }, { cardToken: response })
+        } else {
+          console.log('dados não batem')
+        }
 
         console.log(response)
         return res.status(200).send({ message: "Cartão cadastrado com sucesso!" })
