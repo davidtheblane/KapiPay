@@ -250,8 +250,13 @@ module.exports = {
               "to": `${loggedUserPhone}`,
               "contents": [
                 {
-                  "type": "text",
-                  "text": `Olá é da Kapipay... Acabamos de pagar sua conta. Empresa: ${companyName} Valor: R$${amount} Vencimento: ${dueDate}`
+                  "type": "card",
+                  "title": "Kapipay",
+                  "text": `Olá é da Kapipay... Acabamos de pagar sua conta. Empresa: ${companyName} Valor: R$${amount} Vencimento: ${dueDate}`,
+                  "media": {
+                    "url": "https://i.ibb.co/rFNFsTL/undraw-Message-sent-re-q2kl-1.png",
+                    "disposition": "ON_THE_RIGHT"
+                  }
                 }
               ]
             }
