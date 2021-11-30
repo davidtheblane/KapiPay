@@ -14,7 +14,12 @@ const CompanyTypeSchema = new mongoose.Schema({
   companyId: {
     type: mongoose.ObjectId,
     ref: `Company`
-  }
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const CompanyType = mongoose.model("CompanyType", CompanyTypeSchema);

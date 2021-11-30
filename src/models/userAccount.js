@@ -65,7 +65,12 @@ const UserAccountSchema = new mongoose.Schema({
 
   selfieId: {
     type: String
-  }
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 

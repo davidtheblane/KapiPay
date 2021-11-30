@@ -23,7 +23,12 @@ const UserInvoiceSchema = new mongoose.Schema({
   companyInfo: {
     type: mongoose.ObjectId,
     ref: `Company`
-  }
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 
 });
 

@@ -23,8 +23,8 @@ router.post('/reset_password', authController.passwordReset)
 // Above HERE, all routes are authenticated
 router.use(authMiddleware)
 //Users
-router.get('/users', userController.listUsers)
-router.get('/users/:id', userController.getUser)
+// router.get('/users', userController.listUsers) //admin
+// router.get('/users/:id', userController.getUser) //admin
 router.get('/user/data', userController.userData)
 
 
@@ -46,6 +46,8 @@ router.post('/account/save_card', accountController.saveCard)
 router.post('/account/bank_account', accountController.bankAccount)
 router.post('/account/bill_payment', accountController.billPayment)
 router.post('/account/company', companyController.newCompany)
+router.post('/account/sms', accountController.sendSMS)
+
 // router.post('/account/company/type', companyController.newCompanyType)
 
 

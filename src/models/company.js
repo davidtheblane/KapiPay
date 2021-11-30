@@ -33,7 +33,12 @@ const CompanySchema = new mongoose.Schema({
   invoiceId: {
     type: mongoose.ObjectId,
     ref: `Invoice`
-  }
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const Company = mongoose.model("Company", CompanySchema);
